@@ -150,6 +150,19 @@ async def test_new_printer_and_slot(hass: HomeAssistant, aioclient_mock, payload
     assert hass.states.get("sensor.k1_max_status").state == STATE_UNAVAILABLE
 
 
+async def test_printer_hangs_below_account(hass: HomeAssistant, aioclient_mock, payload, caplog) -> None:
+    from homeassistant.helpers import device_registry as dr
+
+    entry = await _setup(hass, aioclient_mock, payload)
+    reg = dr.async_get(hass)
+    get = getattr(reg, "async_get_device_by_identifier", None)   # HA 2026.10+, async_get_device is deprecated there
+    account = get((DOMAIN, "account_1"), entry.entry_id) if get else reg.async_get_device(identifiers={(DOMAIN, "account_1")})
+    printer = (get((DOMAIN, "moonraker_a3c12bb1ca4ea642"), entry.entry_id) if get
+               else reg.async_get_device(identifiers={(DOMAIN, "moonraker_a3c12bb1ca4ea642")}))
+    assert account and printer and printer.via_device_id == account.id
+    assert "deprecated `via_device`" not in caplog.text
+
+
 async def test_setup_fails_with_bad_key(hass: HomeAssistant, aioclient_mock) -> None:
     entry = MockConfigEntry(domain=DOMAIN, unique_id="1", data={"api_key": KEY})
     entry.add_to_hass(hass)

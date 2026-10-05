@@ -10,6 +10,8 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN, SITE_URL
 from .coordinator import ThreeDSearchCoordinator
 
+_VIA_DEVICE_ID = "via_device_id" in DeviceInfo.__annotations__
+
 
 def account_device(coordinator: ThreeDSearchCoordinator) -> DeviceInfo:
     """The 3DSEARCH account as a service device; printers hang below it."""
@@ -46,15 +48,20 @@ class PrinterEntity(CoordinatorEntity[ThreeDSearchCoordinator]):
         p = coordinator.printer(printer_id) or {}
         self._attr_unique_id = f"{coordinator.account_id}_{p.get('provider', 'printer')}_{printer_id}_{key}"
         self._attr_translation_key = key
-        self._attr_device_info = DeviceInfo(
+        info = DeviceInfo(
             identifiers={(DOMAIN, f"{p.get('provider', 'printer')}_{printer_id}")},
             name=p.get("name") or printer_id,
             manufacturer=p.get("brand"),
             model=p.get("model"),
             sw_version=p.get("fw"),
-            via_device=(DOMAIN, f"account_{coordinator.account_id}"),
             configuration_url=f"{SITE_URL}#printers",
         )
+        # HA 2026.9 replaced via_device (identifier tuple) by via_device_id; older versions only know via_device
+        if _VIA_DEVICE_ID and coordinator.account_device_id:
+            info["via_device_id"] = coordinator.account_device_id
+        else:
+            info["via_device"] = (DOMAIN, f"account_{coordinator.account_id}")
+        self._attr_device_info = info
 
     @property
     def printer(self) -> dict[str, Any]:

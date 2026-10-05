@@ -8,13 +8,14 @@ from pathlib import Path
 
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
 from .api import ThreeDSearchApi
 from .const import CONF_API_KEY, DOMAIN
 from .coordinator import ThreeDSearchConfigEntry, ThreeDSearchCoordinator
+from .entity import account_device
 
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.BUTTON, Platform.EVENT, Platform.SENSOR]
@@ -44,6 +45,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ThreeDSearchConfigEntry)
     coordinator = ThreeDSearchCoordinator(hass, entry, api)
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
+    # Register the account device first: printers link to it by device id (via_device_id, HA 2026.9+)
+    coordinator.account_device_id = dr.async_get(hass).async_get_or_create(
+        config_entry_id=entry.entry_id, **account_device(coordinator)
+    ).id
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
     return True

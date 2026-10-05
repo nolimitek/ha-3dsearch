@@ -33,6 +33,7 @@ class ThreeDSearchCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             update_interval=timedelta(seconds=entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)),
         )
         self.api = api
+        self.account_device_id: str | None = None
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:
