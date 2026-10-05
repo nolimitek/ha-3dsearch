@@ -10,31 +10,37 @@
  */
 (() => {
 "use strict";
-const VERSION = "0.2.1";
+const VERSION = "0.3.0";
 const DOMAIN = "3dsearch";
 
 const I18N = {
-  en: { remaining: "Remaining", ends: "Ends", layer: "Layer", nozzle: "Nozzle", bed: "Bed", pause: "Pause", resume: "Resume", cancel: "Cancel",
+  en: { all: "Show all ({n})", less: "Show less", lowN: "{n} almost empty", inSlot: "Slot", noSpools: "No spools yet.",
+        remaining: "Remaining", ends: "Ends", layer: "Layer", nozzle: "Nozzle", bed: "Bed", pause: "Pause", resume: "Resume", cancel: "Cancel",
         sure: "Really cancel?", slots: "Filament", noSpool: "no spool", stock: "Filament stock", spools: "spools", low: "Almost empty",
         noLow: "No spool is running low.", pick: "Printer", pickHint: "Add a printer in the 3DSEARCH integration first.", lastSeen: "last seen",
         idle: "Idle", printing: "Printing", paused: "Paused", error: "Error", offline: "Offline", today: "today", tomorrow: "tomorrow" },
-  de: { remaining: "Restzeit", ends: "Ende", layer: "Schicht", nozzle: "Düse", bed: "Bett", pause: "Pause", resume: "Fortsetzen", cancel: "Abbrechen",
+  de: { all: "Alle anzeigen ({n})", less: "Weniger anzeigen", lowN: "{n} fast leer", inSlot: "Fach", noSpools: "Noch keine Spulen.",
+        remaining: "Restzeit", ends: "Ende", layer: "Schicht", nozzle: "Düse", bed: "Bett", pause: "Pause", resume: "Fortsetzen", cancel: "Abbrechen",
         sure: "Wirklich abbrechen?", slots: "Filament", noSpool: "keine Spule", stock: "Filamentlager", spools: "Spulen", low: "Fast leer",
         noLow: "Keine Spule ist fast leer.", pick: "Drucker", pickHint: "Lege zuerst in der 3DSEARCH-Integration einen Drucker an.", lastSeen: "zuletzt",
         idle: "Bereit", printing: "Druckt", paused: "Pausiert", error: "Fehler", offline: "Offline", today: "heute", tomorrow: "morgen" },
-  fr: { remaining: "Restant", ends: "Fin", layer: "Couche", nozzle: "Buse", bed: "Plateau", pause: "Pause", resume: "Reprendre", cancel: "Annuler",
+  fr: { all: "Tout afficher ({n})", less: "Afficher moins", lowN: "{n} presque vides", inSlot: "Empl.", noSpools: "Aucune bobine pour l’instant.",
+        remaining: "Restant", ends: "Fin", layer: "Couche", nozzle: "Buse", bed: "Plateau", pause: "Pause", resume: "Reprendre", cancel: "Annuler",
         sure: "Vraiment annuler ?", slots: "Filament", noSpool: "pas de bobine", stock: "Stock de filament", spools: "bobines", low: "Presque vides",
         noLow: "Aucune bobine n’est presque vide.", pick: "Imprimante", pickHint: "Ajoutez d’abord une imprimante dans l’intégration 3DSEARCH.", lastSeen: "vue",
         idle: "Prête", printing: "Impression", paused: "En pause", error: "Erreur", offline: "Hors ligne", today: "aujourd’hui", tomorrow: "demain" },
-  es: { remaining: "Restante", ends: "Fin", layer: "Capa", nozzle: "Boquilla", bed: "Cama", pause: "Pausa", resume: "Reanudar", cancel: "Cancelar",
+  es: { all: "Mostrar todas ({n})", less: "Mostrar menos", lowN: "{n} casi vacías", inSlot: "Ranura", noSpools: "Todavía no hay bobinas.",
+        remaining: "Restante", ends: "Fin", layer: "Capa", nozzle: "Boquilla", bed: "Cama", pause: "Pausa", resume: "Reanudar", cancel: "Cancelar",
         sure: "¿Cancelar de verdad?", slots: "Filamento", noSpool: "sin bobina", stock: "Stock de filamento", spools: "bobinas", low: "Casi vacías",
         noLow: "Ninguna bobina está casi vacía.", pick: "Impresora", pickHint: "Añade primero una impresora en la integración 3DSEARCH.", lastSeen: "vista",
         idle: "Lista", printing: "Imprimiendo", paused: "En pausa", error: "Error", offline: "Sin conexión", today: "hoy", tomorrow: "mañana" },
-  it: { remaining: "Rimanente", ends: "Fine", layer: "Strato", nozzle: "Ugello", bed: "Piatto", pause: "Pausa", resume: "Riprendi", cancel: "Annulla",
+  it: { all: "Mostra tutte ({n})", less: "Mostra meno", lowN: "{n} quasi vuote", inSlot: "Slot", noSpools: "Ancora nessuna bobina.",
+        remaining: "Rimanente", ends: "Fine", layer: "Strato", nozzle: "Ugello", bed: "Piatto", pause: "Pausa", resume: "Riprendi", cancel: "Annulla",
         sure: "Annullare davvero?", slots: "Filamento", noSpool: "nessuna bobina", stock: "Scorte di filamento", spools: "bobine", low: "Quasi vuote",
         noLow: "Nessuna bobina è quasi vuota.", pick: "Stampante", pickHint: "Aggiungi prima una stampante nell’integrazione 3DSEARCH.", lastSeen: "vista",
         idle: "Pronta", printing: "In stampa", paused: "In pausa", error: "Errore", offline: "Offline", today: "oggi", tomorrow: "domani" },
-  nl: { remaining: "Resterend", ends: "Einde", layer: "Laag", nozzle: "Nozzle", bed: "Bed", pause: "Pauze", resume: "Hervatten", cancel: "Annuleren",
+  nl: { all: "Alles tonen ({n})", less: "Minder tonen", lowN: "{n} bijna leeg", inSlot: "Sleuf", noSpools: "Nog geen spoelen.",
+        remaining: "Resterend", ends: "Einde", layer: "Laag", nozzle: "Nozzle", bed: "Bed", pause: "Pauze", resume: "Hervatten", cancel: "Annuleren",
         sure: "Echt annuleren?", slots: "Filament", noSpool: "geen spoel", stock: "Filamentvoorraad", spools: "spoelen", low: "Bijna leeg",
         noLow: "Geen spoel is bijna leeg.", pick: "Printer", pickHint: "Voeg eerst een printer toe in de 3DSEARCH-integratie.", lastSeen: "gezien",
         idle: "Gereed", printing: "Print", paused: "Gepauzeerd", error: "Fout", offline: "Offline", today: "vandaag", tomorrow: "morgen" },
@@ -305,23 +311,26 @@ const PRINTER_CSS = `
 // ── Stock card ───────────────────────────────────────────────────────────────
 class ThreeDSearchStockCard extends HTMLElement {
   static getStubConfig() { return {}; }
-  setConfig(config) { this._config = { ...(config || {}) }; this._sig = null; if (this._hass) this._render(); }
+  setConfig(config) { this._config = { rows: 8, ...(config || {}) }; this._sig = null; if (this._hass) this._render(); }
 
   set hass(hass) {
     this._hass = hass;
-    const ids = {};
+    const ids = { spool: [] };
     for (const e of Object.values(hass.entities || {})) {
-      if (e.platform === DOMAIN && ["spools", "filament_stock", "low_spools"].includes(e.translation_key)) ids[e.translation_key] = e.entity_id;
+      if (e.platform !== DOMAIN) continue;
+      if (e.translation_key === "spool") ids.spool.push(e.entity_id);
+      else if (["spools", "filament_stock", "low_spools"].includes(e.translation_key)) ids[e.translation_key] = e.entity_id;
     }
     this._ids = ids;
-    const sig = Object.values(ids).map((id) => hass.states[id]?.last_updated || "").join("|") + (hass.locale?.language || "");
+    const sig = [ids.spools, ids.filament_stock, ids.low_spools, ...ids.spool].map((id) => (id && hass.states[id] ? hass.states[id].last_updated + hass.states[id].state : "")).join("|")
+      + (hass.locale?.language || "") + (this._open ? "1" : "0");
     if (sig === this._sig) return;
     this._sig = sig;
     this._render();
   }
 
-  getCardSize() { return 3; }
-  getGridOptions() { return { columns: 6, min_columns: 3, rows: "auto" }; }
+  getCardSize() { return 4; }
+  getGridOptions() { return { columns: 6, min_columns: 4, rows: "auto" }; }
 
   _render() {
     if (!this._hass) return;
@@ -330,33 +339,76 @@ class ThreeDSearchStockCard extends HTMLElement {
     const st = (k) => (this._ids[k] ? hass.states[this._ids[k]] : undefined);
     const stock = st("filament_stock"), count = st("spools"), low = st("low_spools");
     const kg = usable(stock) ? (stock.attributes.unit_of_measurement === "kg" ? +stock.state : +stock.state / 1000) : null;
-    const list = (usable(low) && Array.isArray(low.attributes.spools) ? low.attributes.spools : [])
-      .map((s) => `<li><span class="dot" style="${hex(s.color) ? `--c:${hex(s.color)}` : ""}"></span><span class="ln">${esc(s.name || s.material || "")}</span>
-        <span class="lm">${esc(s.material || "")}</span><b>${esc(fmtNum(s.left_g, hass))} g</b></li>`).join("");
+    const thr = (usable(low) && +low.attributes.threshold_g) || 150;
+
+    const isLow = (x) => x.g !== null && x.g < thr;
+    // Order: almost empty → loaded in a printer → by storage location → without location
+    const group = (x) => (isLow(x) ? 0 : x.a.printer ? 1 : x.a.location ? 2 : 3);
+    const spools = this._ids.spool.map((id) => hass.states[id]).filter((s) => s && s.state !== "unavailable")
+      .map((s) => ({ id: s.entity_id, g: usable(s) ? +s.state : null, a: s.attributes }))
+      .sort((x, y) => group(x) - group(y)
+        || String(x.a.printer || x.a.location || "").localeCompare(String(y.a.printer || y.a.location || ""))
+        || String(x.a.slot || "").localeCompare(String(y.a.slot || ""), undefined, { numeric: true })
+        || String(x.a.spool_name || "").localeCompare(String(y.a.spool_name || "")));
+    const nLow = spools.filter(isLow).length;
+    const shown = this._open ? spools : spools.slice(0, Math.max(1, +this._config.rows || 8));
+    const row = (x) => {
+      const a = x.a, col = hex(a.color);
+      const where = a.printer ? `${esc(a.printer)} · ${esc(t.inSlot)} ${esc(a.slot ?? "")}` : esc(a.location || "");
+      const meta = [a.material, a.brand].filter(Boolean).map(esc).join(" · ");
+      const pct = typeof a.remaining_percent === "number" ? Math.max(0, Math.min(100, a.remaining_percent)) : null;
+      return `<li data-id="${esc(x.id)}" class="${isLow(x) ? "low" : ""}">
+        <span class="dot" style="${col ? `--c:${col}` : ""}"></span>
+        <span class="ln"><b>${esc(a.spool_name || "")}</b><small>${meta}${meta && where ? " · " : ""}${a.printer ? `<em>${where}</em>` : where}</small></span>
+        <span class="lg"><b>${x.g !== null ? esc(fmtNum(x.g, hass)) + " g" : "–"}</b>${pct !== null ? `<span class="fill"><i style="width:${pct}%"></i></span>` : ""}</span>
+      </li>`;
+    };
+    // Fallback for servers without the spool list: the old "almost empty" list
+    const fallback = !spools.length && usable(low) && Array.isArray(low.attributes.spools) && low.attributes.spools.length
+      ? low.attributes.spools.map((s) => row({ id: this._ids.low_spools, g: s.left_g, a: { spool_name: s.name, material: s.material, color: s.color } })).join("") : "";
+
     this.shadowRoot.innerHTML = `<style>${BASE_CSS}${STOCK_CSS}</style>
       <ha-card style="--state-color:var(--primary-color, #03a9f4)">
         <div class="lbl">${esc(this._config.title || t.stock)}</div>
-        <div class="big" data-more="filament_stock"><b>${kg !== null ? esc(fmtNum(kg, hass, 1)) : "–"}</b><span>kg</span>
-          ${usable(count) ? `<em data-more="spools">${esc(fmtNum(count.state, hass))} ${esc(t.spools)}</em>` : ""}</div>
-        <div class="sec" data-more="low_spools"><div class="lbl">${esc(t.low)}${list ? ` · ${esc(low.state)}` : ""}</div>
-          ${list ? `<ul>${list}</ul>` : `<div class="muted">${esc(t.noLow)}</div>`}</div>
+        <div class="big"><b data-more="filament_stock">${kg !== null ? esc(fmtNum(kg, hass, 1)) : "–"}</b><span>kg</span>
+          <em>${usable(count) ? `<span data-more="spools">${esc(fmtNum(count.state, hass))} ${esc(t.spools)}</span>` : ""}${nLow ? `<span class="lowchip" data-more="low_spools">${esc(t.lowN.replace("{n}", nLow))}</span>` : ""}</em></div>
+        ${spools.length || fallback ? `<ul class="sec">${spools.length ? shown.map(row).join("") : fallback}</ul>` : `<div class="muted sec">${esc(t.noSpools)}</div>`}
+        ${spools.length > shown.length || this._open ? `<button class="more">${esc(this._open ? t.less : t.all.replace("{n}", spools.length))}</button>` : ""}
       </ha-card>`;
-    this.shadowRoot.querySelectorAll("[data-more]").forEach((el) => el.addEventListener("click", (ev) => { ev.stopPropagation(); moreInfo(this, this._ids[el.dataset.more]); }));
+    this.shadowRoot.querySelectorAll("[data-more]").forEach((el) => el.addEventListener("click", () => moreInfo(this, this._ids[el.dataset.more])));
+    this.shadowRoot.querySelectorAll("li[data-id]").forEach((el) => el.addEventListener("click", () => moreInfo(this, el.dataset.id)));
+    const more = this.shadowRoot.querySelector(".more");
+    if (more) more.addEventListener("click", () => { this._open = !this._open; this._sig = null; this._render(); });
   }
 }
 
 const STOCK_CSS = `
-  .big { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; cursor: pointer; }
-  .big b { font-size: 34px; font-weight: 700; color: var(--primary-text-color); line-height: 1.1; }
-  .big span { font-size: 15px; color: var(--secondary-text-color); font-weight: 600; }
-  .big em { font-style: normal; margin-left: auto; font-size: 13px; color: var(--secondary-text-color); }
-  [data-more="low_spools"] { cursor: pointer; }
-  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-  li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--primary-text-color); min-width: 0; }
-  .dot { width: 14px; height: 14px; border-radius: 50%; flex: none; background: var(--c, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-text-color, #888) 28%, transparent); }
-  .ln { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .lm { color: var(--secondary-text-color); font-size: 12px; }
-  li b { font-weight: 600; color: var(--error-color, #db4437); white-space: nowrap; }
+  .big { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .big > b { font-size: 34px; font-weight: 700; color: var(--primary-text-color); line-height: 1.1; cursor: pointer; }
+  .big > span { font-size: 15px; color: var(--secondary-text-color); font-weight: 600; }
+  .big em { font-style: normal; margin-left: auto; display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--secondary-text-color); }
+  .big em span { cursor: pointer; }
+  .lowchip { padding: 2px 9px; border-radius: 999px; font-weight: 600; color: var(--warning-color, #ffa600);
+             background: color-mix(in srgb, var(--warning-color, #ffa600) 14%, transparent); }
+  ul { list-style: none; margin: 14px 0 0; padding: 0; display: grid; }
+  li { display: flex; align-items: center; gap: 10px; padding: 8px 0; min-width: 0; cursor: pointer;
+       border-top: 1px solid var(--divider-color, rgba(127,127,127,.18)); }
+  li:first-child { border-top: 0; }
+  .dot { width: 22px; height: 22px; border-radius: 50%; flex: none; box-sizing: border-box;
+         background: radial-gradient(circle, var(--card-background-color, #fff) 0 3px, var(--c, transparent) 4px);
+         box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-text-color, #888) 28%, transparent); }
+  .ln { flex: 1; min-width: 0; display: grid; }
+  .ln b { font-size: 14px; font-weight: 600; color: var(--primary-text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ln small { font-size: 12px; color: var(--secondary-text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ln em { font-style: normal; color: var(--primary-color, #03a9f4); font-weight: 600; }
+  .lg { flex: none; display: grid; justify-items: end; gap: 4px; min-width: 64px; }
+  .lg b { font-size: 14px; font-weight: 600; color: var(--primary-text-color); white-space: nowrap; }
+  .fill { width: 64px; height: 4px; border-radius: 2px; background: var(--divider-color, rgba(127,127,127,.25)); overflow: hidden; }
+  .fill i { display: block; height: 100%; border-radius: 2px; background: var(--primary-color, #03a9f4); }
+  li.low .lg b { color: var(--error-color, #db4437); }
+  li.low .fill i { background: var(--warning-color, #ffa600); }
+  .more { margin-top: 10px; width: 100%; padding: 9px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 13px;
+          border: 1px solid var(--divider-color, rgba(127,127,127,.3)); background: none; color: var(--primary-color, #03a9f4); }
 `;
 
 // ── Editor: pick the printer (plain <select>, no internal HA components needed) ──
@@ -396,7 +448,7 @@ for (const [tag, cls] of [["threedsearch-printer-card", ThreeDSearchPrinterCard]
 window.customCards = window.customCards || [];
 for (const c of [
   { type: "threedsearch-printer-card", name: "3DSEARCH printer", description: "Printer state, progress, temperatures and filament slots in their real colours.", preview: true, documentationURL: "https://github.com/nolimitek/ha-3dsearch" },
-  { type: "threedsearch-stock-card", name: "3DSEARCH filament stock", description: "Filament in stock and spools that run low.", preview: true, documentationURL: "https://github.com/nolimitek/ha-3dsearch" },
+  { type: "threedsearch-stock-card", name: "3DSEARCH filament stock", description: "All spools with colour and remaining filament; almost empty ones first.", preview: true, documentationURL: "https://github.com/nolimitek/ha-3dsearch" },
 ]) if (!window.customCards.some((x) => x.type === c.type)) window.customCards.push(c);
 console.info(`%c 3DSEARCH cards %c ${VERSION} `, "background:#ff7a1a;color:#fff;font-weight:700;border-radius:3px 0 0 3px", "background:#333;color:#fff;border-radius:0 3px 3px 0");
 })();

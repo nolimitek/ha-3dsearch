@@ -163,6 +163,23 @@ async def test_printer_hangs_below_account(hass: HomeAssistant, aioclient_mock, 
     assert "deprecated `via_device`" not in caplog.text
 
 
+async def test_spool_sensors(hass: HomeAssistant, aioclient_mock, payload) -> None:
+    entry = await _setup(hass, aioclient_mock, payload)
+    blue = hass.states.get("sensor.3dsearch_pla_blue")
+    assert blue.state == "358" and blue.attributes["unit_of_measurement"] == "g"
+    assert blue.attributes["printer"] == "Printsaurus" and blue.attributes["slot"] == "1" and blue.attributes["location"] == "ACE Pro"
+    black = hass.states.get("sensor.3dsearch_black_pla")
+    assert black.state == "80" and black.attributes["printer"] is None and black.attributes["location"] == "Shelf"
+
+    # New spool on 3dsearch.net → new entity; archived spool → unavailable
+    payload["spools"]["items"].append({"id": 50, "name": "PETG Green", "brand": "Elegoo", "material": "PETG", "color": "#1baf7a",
+                                       "left": 900, "total": 1000, "pct": 90, "value": None, "location": None, "loaded": None})
+    payload["spools"]["items"] = [x for x in payload["spools"]["items"] if x["id"] != 9]
+    await _refresh(hass, entry, aioclient_mock, payload)
+    assert hass.states.get("sensor.3dsearch_petg_green").state == "900"
+    assert hass.states.get("sensor.3dsearch_black_pla").state == STATE_UNAVAILABLE
+
+
 async def test_setup_fails_with_bad_key(hass: HomeAssistant, aioclient_mock) -> None:
     entry = MockConfigEntry(domain=DOMAIN, unique_id="1", data={"api_key": KEY})
     entry.add_to_hass(hass)

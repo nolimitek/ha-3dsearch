@@ -19,7 +19,7 @@ Per printer (one device each):
 | `button` Pause / Resume / Cancel print | Anycubic Cloud and Klipper only — Bambu Lab, Creality and Elegoo are read-only |
 | `event` Print | `started`, `finished`, `failed` — for automations |
 
-For the account: **Spools in stock**, **Filament in stock**, **Spools almost empty** (with the list of spools).
+For the account: **Spools in stock**, **Filament in stock**, **Spools almost empty** (with the list of spools), and **one sensor per spool** (remaining grams; brand, material, colour, storage location and — when loaded — printer and slot as attributes). Spools added on 3dsearch.net appear automatically; archived ones become unavailable.
 
 The print event is based on the job history of 3dsearch.net, so a print that ends while Home Assistant restarts is still reported.
 
@@ -38,7 +38,7 @@ State, progress ring with remaining time and end, temperatures, the filament slo
 type: custom:threedsearch-stock-card
 ```
 
-Filament in stock and the spools that are almost empty.
+Filament in stock and all your spools with colour, remaining grams and where they are (printer slot or storage location). Almost empty spools come first; with many spools the list folds after 8 rows (`rows: 12` to change).
 
 ## Installation
 

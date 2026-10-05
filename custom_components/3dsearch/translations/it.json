@@ -98,6 +98,12 @@
       "slot": {
         "name": "Slot {slot}",
         "state_attributes": {
+          "slot": {
+            "name": "Slot"
+          },
+          "index": {
+            "name": "Indice"
+          },
           "material": {
             "name": "Materiale"
           },
@@ -118,6 +124,41 @@
           },
           "spool_weight": {
             "name": "Peso bobina"
+          }
+        }
+      },
+      "spool": {
+        "name": "{spool}",
+        "state_attributes": {
+          "spool_id": {
+            "name": "ID bobina"
+          },
+          "spool_name": {
+            "name": "Bobina"
+          },
+          "brand": {
+            "name": "Marca"
+          },
+          "material": {
+            "name": "Materiale"
+          },
+          "color": {
+            "name": "Colore"
+          },
+          "remaining_percent": {
+            "name": "Rimanente (%)"
+          },
+          "spool_weight": {
+            "name": "Peso bobina"
+          },
+          "location": {
+            "name": "Posizione"
+          },
+          "printer": {
+            "name": "Stampante"
+          },
+          "slot": {
+            "name": "Slot"
           }
         }
       },

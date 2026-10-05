@@ -98,6 +98,12 @@
       "slot": {
         "name": "Ranura {slot}",
         "state_attributes": {
+          "slot": {
+            "name": "Ranura"
+          },
+          "index": {
+            "name": "Índice"
+          },
           "material": {
             "name": "Material"
           },
@@ -118,6 +124,41 @@
           },
           "spool_weight": {
             "name": "Peso de la bobina"
+          }
+        }
+      },
+      "spool": {
+        "name": "{spool}",
+        "state_attributes": {
+          "spool_id": {
+            "name": "ID de bobina"
+          },
+          "spool_name": {
+            "name": "Bobina"
+          },
+          "brand": {
+            "name": "Marca"
+          },
+          "material": {
+            "name": "Material"
+          },
+          "color": {
+            "name": "Color"
+          },
+          "remaining_percent": {
+            "name": "Restante (%)"
+          },
+          "spool_weight": {
+            "name": "Peso de la bobina"
+          },
+          "location": {
+            "name": "Ubicación"
+          },
+          "printer": {
+            "name": "Impresora"
+          },
+          "slot": {
+            "name": "Ranura"
           }
         }
       },

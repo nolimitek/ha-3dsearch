@@ -98,6 +98,12 @@
       "slot": {
         "name": "Slot {slot}",
         "state_attributes": {
+          "slot": {
+            "name": "Slot"
+          },
+          "index": {
+            "name": "Index"
+          },
           "material": {
             "name": "Material"
           },
@@ -118,6 +124,41 @@
           },
           "spool_weight": {
             "name": "Spool weight"
+          }
+        }
+      },
+      "spool": {
+        "name": "{spool}",
+        "state_attributes": {
+          "spool_id": {
+            "name": "Spool ID"
+          },
+          "spool_name": {
+            "name": "Spool"
+          },
+          "brand": {
+            "name": "Brand"
+          },
+          "material": {
+            "name": "Material"
+          },
+          "color": {
+            "name": "Colour"
+          },
+          "remaining_percent": {
+            "name": "Remaining (%)"
+          },
+          "spool_weight": {
+            "name": "Spool weight"
+          },
+          "location": {
+            "name": "Location"
+          },
+          "printer": {
+            "name": "Printer"
+          },
+          "slot": {
+            "name": "Slot"
           }
         }
       },

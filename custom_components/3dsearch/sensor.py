@@ -20,7 +20,7 @@ from homeassistant.util import dt as dt_util
 
 from .const import STATES
 from .coordinator import ThreeDSearchConfigEntry, ThreeDSearchCoordinator
-from .entity import PrinterEntity, ThreeDSearchEntity, add_printer_entities
+from .entity import PrinterEntity, ThreeDSearchEntity, add_printer_entities, add_spool_entities
 
 
 def _ts(value: str | None) -> datetime | None:
@@ -100,6 +100,7 @@ async def async_setup_entry(
         return out
 
     add_printer_entities(entry, coordinator, async_add_entities, factory)
+    add_spool_entities(entry, coordinator, async_add_entities, lambda spool_id: SpoolSensor(coordinator, spool_id))
 
 
 class PrinterSensor(PrinterEntity, SensorEntity):
@@ -222,4 +223,44 @@ class LowSpoolsSensor(ThreeDSearchEntity, SensorEntity):
                  "color": s.get("color"), "left_g": s.get("left")}
                 for s in spools.get("low") or []
             ],
+        }
+
+
+class SpoolSensor(ThreeDSearchEntity, SensorEntity):
+    """One spool of the stock on 3dsearch.net: remaining grams; brand, material, colour, location as attributes."""
+
+    _attr_device_class = SensorDeviceClass.WEIGHT
+    _attr_native_unit_of_measurement = UnitOfMass.GRAMS
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def __init__(self, coordinator: ThreeDSearchCoordinator, spool_id: str) -> None:
+        super().__init__(coordinator, "spool")
+        self.spool_id = spool_id
+        self._attr_unique_id = f"{coordinator.account_id}_spool_{spool_id}"
+        spool = coordinator.spool(spool_id) or {}
+        self._attr_translation_placeholders = {"spool": spool.get("name") or f"#{spool_id}"}
+
+    @property
+    def available(self) -> bool:
+        return super().available and self.coordinator.spool(self.spool_id) is not None
+
+    @property
+    def native_value(self) -> int | None:
+        return (self.coordinator.spool(self.spool_id) or {}).get("left")
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        s = self.coordinator.spool(self.spool_id) or {}
+        loaded = s.get("loaded") or {}
+        return {
+            "spool_id": s.get("id"),
+            "spool_name": s.get("name"),
+            "brand": s.get("brand"),
+            "material": s.get("material"),
+            "color": s.get("color"),
+            "remaining_percent": s.get("pct"),
+            "spool_weight": s.get("total"),
+            "location": s.get("location"),
+            "printer": loaded.get("printer"),
+            "slot": loaded.get("slot"),
         }

@@ -40,6 +40,9 @@
       "filament_stock": {
         "default": "mdi:scale"
       },
+      "spool": {
+        "default": "mdi:album"
+      },
       "low_spools": {
         "default": "mdi:alert-outline"
       }

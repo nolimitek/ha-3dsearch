@@ -41,7 +41,13 @@ PAYLOAD: dict[str, Any] = {
         },
     ],
     "spools": {"count": 28, "left_g": 16570, "value": 233.32, "low_g": 150,
-               "low": [{"id": 9, "name": "Black PLA", "brand": None, "material": "PLA", "color": "#000000", "left": 80}]},
+               "low": [{"id": 9, "name": "Black PLA", "brand": None, "material": "PLA", "color": "#000000", "left": 80}],
+               "items": [
+                   {"id": 31, "name": "PLA Blue", "brand": "Sunlu", "material": "PLA", "color": "#0047bb", "left": 358, "total": 1000,
+                    "pct": 36, "value": 5.33, "location": "ACE Pro", "loaded": {"printer": "Printsaurus", "slot": "1"}},
+                   {"id": 9, "name": "Black PLA", "brand": None, "material": "PLA", "color": "#000000", "left": 80, "total": 1000,
+                    "pct": 8, "value": None, "location": "Shelf", "loaded": None},
+               ]},
     "time": "2026-10-05T12:20:00Z",
 }
 

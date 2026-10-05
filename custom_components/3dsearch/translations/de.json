@@ -98,6 +98,12 @@
       "slot": {
         "name": "Fach {slot}",
         "state_attributes": {
+          "slot": {
+            "name": "Fach"
+          },
+          "index": {
+            "name": "Index"
+          },
           "material": {
             "name": "Material"
           },
@@ -118,6 +124,41 @@
           },
           "spool_weight": {
             "name": "Spulengewicht"
+          }
+        }
+      },
+      "spool": {
+        "name": "{spool}",
+        "state_attributes": {
+          "spool_id": {
+            "name": "Spulen-ID"
+          },
+          "spool_name": {
+            "name": "Spule"
+          },
+          "brand": {
+            "name": "Marke"
+          },
+          "material": {
+            "name": "Material"
+          },
+          "color": {
+            "name": "Farbe"
+          },
+          "remaining_percent": {
+            "name": "Rest (%)"
+          },
+          "spool_weight": {
+            "name": "Spulengewicht"
+          },
+          "location": {
+            "name": "Lagerort"
+          },
+          "printer": {
+            "name": "Drucker"
+          },
+          "slot": {
+            "name": "Fach"
           }
         }
       },

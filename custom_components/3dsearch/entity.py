@@ -78,6 +78,20 @@ class PrinterEntity(CoordinatorEntity[ThreeDSearchCoordinator]):
         return self.printer.get("job") or {}
 
 
+def add_spool_entities(entry, coordinator: ThreeDSearchCoordinator, async_add_entities, factory) -> None:
+    """Create one entity per active spool now and for spools added later on 3dsearch.net."""
+    known: set[str] = set()
+
+    def _add() -> None:
+        new = [factory(spool_id) for spool_id in (coordinator.data or {}).get("spool_items", {}) if spool_id not in known]
+        known.update((coordinator.data or {}).get("spool_items", {}))
+        if new:
+            async_add_entities(new)
+
+    _add()
+    entry.async_on_unload(coordinator.async_add_listener(_add))
+
+
 def add_printer_entities(entry, coordinator: ThreeDSearchCoordinator, async_add_entities, factory) -> None:
     """Create entities for every printer now and for printers/slots that show up later.
 

@@ -98,6 +98,12 @@
       "slot": {
         "name": "Sleuf {slot}",
         "state_attributes": {
+          "slot": {
+            "name": "Sleuf"
+          },
+          "index": {
+            "name": "Index"
+          },
           "material": {
             "name": "Materiaal"
           },
@@ -118,6 +124,41 @@
           },
           "spool_weight": {
             "name": "Spoelgewicht"
+          }
+        }
+      },
+      "spool": {
+        "name": "{spool}",
+        "state_attributes": {
+          "spool_id": {
+            "name": "Spoel-ID"
+          },
+          "spool_name": {
+            "name": "Spoel"
+          },
+          "brand": {
+            "name": "Merk"
+          },
+          "material": {
+            "name": "Materiaal"
+          },
+          "color": {
+            "name": "Kleur"
+          },
+          "remaining_percent": {
+            "name": "Resterend (%)"
+          },
+          "spool_weight": {
+            "name": "Spoelgewicht"
+          },
+          "location": {
+            "name": "Opslaglocatie"
+          },
+          "printer": {
+            "name": "Printer"
+          },
+          "slot": {
+            "name": "Sleuf"
           }
         }
       },

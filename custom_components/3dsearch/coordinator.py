@@ -44,10 +44,13 @@ class ThreeDSearchCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             raise UpdateFailed(translation_domain=DOMAIN, translation_key="update_failed",
                                translation_placeholders={"error": err.code}) from err
         printers = {str(p["id"]): p for p in data.get("printers", []) if isinstance(p, dict) and p.get("id")}
+        spools = data.get("spools") or {}
+        items = {str(s["id"]): s for s in spools.get("items") or [] if isinstance(s, dict) and s.get("id")}
         return {
             "account": data.get("account") or {},
             "printers": printers,
-            "spools": data.get("spools") or {},
+            "spools": spools,
+            "spool_items": items,
             "time": data.get("time"),
         }
 
@@ -59,3 +62,7 @@ class ThreeDSearchCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def printer(self, printer_id: str) -> dict[str, Any] | None:
         """Latest data of one printer, None if it is gone."""
         return (self.data or {}).get("printers", {}).get(printer_id)
+
+    def spool(self, spool_id: str) -> dict[str, Any] | None:
+        """Latest data of one active spool, None once it is archived or deleted on 3dsearch.net."""
+        return (self.data or {}).get("spool_items", {}).get(spool_id)
