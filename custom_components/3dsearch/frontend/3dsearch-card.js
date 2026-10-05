@@ -10,7 +10,7 @@
  */
 (() => {
 "use strict";
-const VERSION = "0.4.0";
+const VERSION = "0.4.1";
 const DOMAIN = "3dsearch";
 
 const I18N = {
@@ -447,7 +447,8 @@ class ThreeDSearchStockCard extends HTMLElement {
   }
 
   getCardSize() { return 4; }
-  getGridOptions() { return { columns: 6, min_columns: 4, rows: "auto" }; }
+  // Full section width: spool names and "printer · slot" get cut off at half width
+  getGridOptions() { return { columns: 12, min_columns: 6, rows: "auto" }; }
 
   _render() {
     if (!this._hass) return;
