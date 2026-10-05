@@ -1,0 +1,195 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connecter 3DSEARCH",
+        "description": "Créez une clé sur 3dsearch.net dans Imprimantes & filament → Paramètres → Home Assistant ({settings_url}) et collez-la ici.",
+        "data": {
+          "api_key": "Clé API"
+        },
+        "data_description": {
+          "api_key": "Commence par 3ds_. Elle n’est affichée qu’une seule fois à sa création."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Saisir une nouvelle clé API",
+        "description": "La clé enregistrée ne fonctionne plus – elle a probablement été révoquée. Créez-en une nouvelle sur {settings_url}.",
+        "data": {
+          "api_key": "Clé API"
+        },
+        "data_description": {
+          "api_key": "Commence par 3ds_. Elle n’est affichée qu’une seule fois à sa création."
+        }
+      }
+    },
+    "error": {
+      "invalid_key": "Cette clé n’est pas valide. Copiez-la à nouveau ou créez-en une nouvelle.",
+      "not_allowed": "Imprimantes & filament n’est pas disponible pour ce compte 3DSEARCH.",
+      "cannot_connect": "Impossible de joindre 3dsearch.net. Réessayez dans un instant."
+    },
+    "abort": {
+      "already_configured": "Ce compte 3DSEARCH est déjà configuré.",
+      "reauth_successful": "La nouvelle clé est enregistrée.",
+      "wrong_account": "Cette clé appartient à un autre compte 3DSEARCH."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "scan_interval": "Intervalle de mise à jour"
+        },
+        "data_description": {
+          "scan_interval": "Fréquence à laquelle Home Assistant interroge 3dsearch.net (secondes). Les clouds des imprimantes sont synchronisés au plus une fois par minute."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "État",
+        "state": {
+          "idle": "Prête",
+          "printing": "Impression",
+          "paused": "En pause",
+          "error": "Erreur",
+          "offline": "Hors ligne"
+        },
+        "state_attributes": {
+          "error": {
+            "name": "Erreur"
+          },
+          "provider": {
+            "name": "Connexion"
+          },
+          "last_update": {
+            "name": "Dernière mise à jour"
+          }
+        }
+      },
+      "progress": {
+        "name": "Progression"
+      },
+      "remaining_time": {
+        "name": "Temps restant"
+      },
+      "end_time": {
+        "name": "Fin estimée"
+      },
+      "job_name": {
+        "name": "Tâche"
+      },
+      "current_layer": {
+        "name": "Couche actuelle",
+        "state_attributes": {
+          "total_layers": {
+            "name": "Nombre de couches"
+          }
+        }
+      },
+      "nozzle_temperature": {
+        "name": "Température de la buse"
+      },
+      "bed_temperature": {
+        "name": "Température du plateau"
+      },
+      "slot": {
+        "name": "Emplacement {slot}",
+        "state_attributes": {
+          "material": {
+            "name": "Matériau"
+          },
+          "color": {
+            "name": "Couleur"
+          },
+          "spool_id": {
+            "name": "ID de la bobine"
+          },
+          "spool_name": {
+            "name": "Bobine"
+          },
+          "brand": {
+            "name": "Marque"
+          },
+          "remaining_percent": {
+            "name": "Restant (%)"
+          },
+          "spool_weight": {
+            "name": "Poids de la bobine"
+          }
+        }
+      },
+      "spools": {
+        "name": "Bobines en stock"
+      },
+      "filament_stock": {
+        "name": "Filament en stock"
+      },
+      "low_spools": {
+        "name": "Bobines presque vides",
+        "state_attributes": {
+          "threshold_g": {
+            "name": "Seuil (g)"
+          },
+          "spools": {
+            "name": "Bobines"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "online": {
+        "name": "En ligne"
+      },
+      "printing": {
+        "name": "Impression"
+      },
+      "problem": {
+        "name": "Problème",
+        "state_attributes": {
+          "error": {
+            "name": "Erreur"
+          }
+        }
+      }
+    },
+    "button": {
+      "pause": {
+        "name": "Mettre en pause"
+      },
+      "resume": {
+        "name": "Reprendre l’impression"
+      },
+      "cancel": {
+        "name": "Annuler l’impression"
+      }
+    },
+    "event": {
+      "print": {
+        "name": "Impression",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "started": "Démarrée",
+              "finished": "Terminée",
+              "failed": "Échouée"
+            }
+          }
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "La clé API 3DSEARCH n’est plus valide."
+    },
+    "update_failed": {
+      "message": "Échec de la mise à jour depuis 3dsearch.net ({error})."
+    },
+    "command_failed": {
+      "message": "L’imprimante n’a pas accepté la commande ({error})."
+    }
+  }
+}

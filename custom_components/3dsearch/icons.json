@@ -1,0 +1,69 @@
+{
+  "entity": {
+    "sensor": {
+      "status": {
+        "default": "mdi:printer-3d",
+        "state": {
+          "printing": "mdi:printer-3d-nozzle",
+          "paused": "mdi:pause-circle-outline",
+          "error": "mdi:alert-circle-outline",
+          "offline": "mdi:printer-3d-off"
+        }
+      },
+      "progress": {
+        "default": "mdi:progress-clock"
+      },
+      "remaining_time": {
+        "default": "mdi:timer-sand"
+      },
+      "end_time": {
+        "default": "mdi:clock-end"
+      },
+      "job_name": {
+        "default": "mdi:file-cad"
+      },
+      "current_layer": {
+        "default": "mdi:layers-triple-outline"
+      },
+      "nozzle_temperature": {
+        "default": "mdi:printer-3d-nozzle-heat"
+      },
+      "bed_temperature": {
+        "default": "mdi:radiator"
+      },
+      "slot": {
+        "default": "mdi:printer-3d-nozzle-outline"
+      },
+      "spools": {
+        "default": "mdi:package-variant-closed"
+      },
+      "filament_stock": {
+        "default": "mdi:scale"
+      },
+      "low_spools": {
+        "default": "mdi:alert-outline"
+      }
+    },
+    "binary_sensor": {
+      "printing": {
+        "default": "mdi:printer-3d-nozzle"
+      }
+    },
+    "button": {
+      "pause": {
+        "default": "mdi:pause"
+      },
+      "resume": {
+        "default": "mdi:play"
+      },
+      "cancel": {
+        "default": "mdi:stop"
+      }
+    },
+    "event": {
+      "print": {
+        "default": "mdi:printer-3d"
+      }
+    }
+  }
+}

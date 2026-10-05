@@ -1,0 +1,195 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "3DSEARCH koppelen",
+        "description": "Maak op 3dsearch.net onder Printers & filament → Instellingen → Home Assistant ({settings_url}) een sleutel aan en plak hem hier.",
+        "data": {
+          "api_key": "API-sleutel"
+        },
+        "data_description": {
+          "api_key": "Begint met 3ds_. Hij wordt bij het aanmaken maar één keer getoond."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Nieuwe API-sleutel invoeren",
+        "description": "De opgeslagen sleutel werkt niet meer – waarschijnlijk is hij ingetrokken. Maak een nieuwe aan op {settings_url}.",
+        "data": {
+          "api_key": "API-sleutel"
+        },
+        "data_description": {
+          "api_key": "Begint met 3ds_. Hij wordt bij het aanmaken maar één keer getoond."
+        }
+      }
+    },
+    "error": {
+      "invalid_key": "Deze sleutel is ongeldig. Kopieer hem opnieuw of maak een nieuwe aan.",
+      "not_allowed": "Printers & filament is niet beschikbaar voor dit 3DSEARCH-account.",
+      "cannot_connect": "3dsearch.net is niet bereikbaar. Probeer het zo opnieuw."
+    },
+    "abort": {
+      "already_configured": "Dit 3DSEARCH-account is al ingesteld.",
+      "reauth_successful": "De nieuwe sleutel is opgeslagen.",
+      "wrong_account": "Deze sleutel hoort bij een ander 3DSEARCH-account."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opties",
+        "data": {
+          "scan_interval": "Update-interval"
+        },
+        "data_description": {
+          "scan_interval": "Hoe vaak Home Assistant 3dsearch.net bevraagt (seconden). Printerclouds worden hooguit één keer per minuut gesynchroniseerd."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "idle": "Gereed",
+          "printing": "Print",
+          "paused": "Gepauzeerd",
+          "error": "Fout",
+          "offline": "Offline"
+        },
+        "state_attributes": {
+          "error": {
+            "name": "Fout"
+          },
+          "provider": {
+            "name": "Koppeling"
+          },
+          "last_update": {
+            "name": "Laatste update"
+          }
+        }
+      },
+      "progress": {
+        "name": "Voortgang"
+      },
+      "remaining_time": {
+        "name": "Resterende tijd"
+      },
+      "end_time": {
+        "name": "Verwacht einde"
+      },
+      "job_name": {
+        "name": "Printopdracht"
+      },
+      "current_layer": {
+        "name": "Huidige laag",
+        "state_attributes": {
+          "total_layers": {
+            "name": "Totaal lagen"
+          }
+        }
+      },
+      "nozzle_temperature": {
+        "name": "Nozzletemperatuur"
+      },
+      "bed_temperature": {
+        "name": "Bedtemperatuur"
+      },
+      "slot": {
+        "name": "Sleuf {slot}",
+        "state_attributes": {
+          "material": {
+            "name": "Materiaal"
+          },
+          "color": {
+            "name": "Kleur"
+          },
+          "spool_id": {
+            "name": "Spoel-ID"
+          },
+          "spool_name": {
+            "name": "Spoel"
+          },
+          "brand": {
+            "name": "Merk"
+          },
+          "remaining_percent": {
+            "name": "Resterend (%)"
+          },
+          "spool_weight": {
+            "name": "Spoelgewicht"
+          }
+        }
+      },
+      "spools": {
+        "name": "Spoelen op voorraad"
+      },
+      "filament_stock": {
+        "name": "Filament op voorraad"
+      },
+      "low_spools": {
+        "name": "Spoelen bijna leeg",
+        "state_attributes": {
+          "threshold_g": {
+            "name": "Drempel (g)"
+          },
+          "spools": {
+            "name": "Spoelen"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "online": {
+        "name": "Online"
+      },
+      "printing": {
+        "name": "Print"
+      },
+      "problem": {
+        "name": "Probleem",
+        "state_attributes": {
+          "error": {
+            "name": "Fout"
+          }
+        }
+      }
+    },
+    "button": {
+      "pause": {
+        "name": "Print pauzeren"
+      },
+      "resume": {
+        "name": "Print hervatten"
+      },
+      "cancel": {
+        "name": "Print annuleren"
+      }
+    },
+    "event": {
+      "print": {
+        "name": "Print",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "started": "Gestart",
+              "finished": "Klaar",
+              "failed": "Mislukt"
+            }
+          }
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "De 3DSEARCH-API-sleutel is niet meer geldig."
+    },
+    "update_failed": {
+      "message": "Bijwerken vanaf 3dsearch.net mislukt ({error})."
+    },
+    "command_failed": {
+      "message": "De printer heeft de opdracht niet geaccepteerd ({error})."
+    }
+  }
+}

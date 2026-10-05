@@ -1,0 +1,195 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect 3DSEARCH",
+        "description": "Create a key on 3dsearch.net under Printers & Filament → Settings → Home Assistant ({settings_url}) and paste it here.",
+        "data": {
+          "api_key": "API key"
+        },
+        "data_description": {
+          "api_key": "Starts with 3ds_. It is shown only once when you create it."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Enter a new API key",
+        "description": "The saved key no longer works – it was probably revoked. Create a new one at {settings_url}.",
+        "data": {
+          "api_key": "API key"
+        },
+        "data_description": {
+          "api_key": "Starts with 3ds_. It is shown only once when you create it."
+        }
+      }
+    },
+    "error": {
+      "invalid_key": "This key is not valid. Copy it again or create a new one.",
+      "not_allowed": "Printers & Filament is not available for this 3DSEARCH account.",
+      "cannot_connect": "Could not reach 3dsearch.net. Try again in a moment."
+    },
+    "abort": {
+      "already_configured": "This 3DSEARCH account is already set up.",
+      "reauth_successful": "The new key is saved.",
+      "wrong_account": "This key belongs to a different 3DSEARCH account."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "scan_interval": "Update interval"
+        },
+        "data_description": {
+          "scan_interval": "How often Home Assistant asks 3dsearch.net (seconds). Printer clouds are synced at most once a minute."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "idle": "Idle",
+          "printing": "Printing",
+          "paused": "Paused",
+          "error": "Error",
+          "offline": "Offline"
+        },
+        "state_attributes": {
+          "error": {
+            "name": "Error"
+          },
+          "provider": {
+            "name": "Connection"
+          },
+          "last_update": {
+            "name": "Last update"
+          }
+        }
+      },
+      "progress": {
+        "name": "Progress"
+      },
+      "remaining_time": {
+        "name": "Remaining time"
+      },
+      "end_time": {
+        "name": "Estimated end"
+      },
+      "job_name": {
+        "name": "Job"
+      },
+      "current_layer": {
+        "name": "Current layer",
+        "state_attributes": {
+          "total_layers": {
+            "name": "Total layers"
+          }
+        }
+      },
+      "nozzle_temperature": {
+        "name": "Nozzle temperature"
+      },
+      "bed_temperature": {
+        "name": "Bed temperature"
+      },
+      "slot": {
+        "name": "Slot {slot}",
+        "state_attributes": {
+          "material": {
+            "name": "Material"
+          },
+          "color": {
+            "name": "Colour"
+          },
+          "spool_id": {
+            "name": "Spool ID"
+          },
+          "spool_name": {
+            "name": "Spool"
+          },
+          "brand": {
+            "name": "Brand"
+          },
+          "remaining_percent": {
+            "name": "Remaining (%)"
+          },
+          "spool_weight": {
+            "name": "Spool weight"
+          }
+        }
+      },
+      "spools": {
+        "name": "Spools in stock"
+      },
+      "filament_stock": {
+        "name": "Filament in stock"
+      },
+      "low_spools": {
+        "name": "Spools almost empty",
+        "state_attributes": {
+          "threshold_g": {
+            "name": "Threshold (g)"
+          },
+          "spools": {
+            "name": "Spools"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "online": {
+        "name": "Online"
+      },
+      "printing": {
+        "name": "Printing"
+      },
+      "problem": {
+        "name": "Problem",
+        "state_attributes": {
+          "error": {
+            "name": "Error"
+          }
+        }
+      }
+    },
+    "button": {
+      "pause": {
+        "name": "Pause print"
+      },
+      "resume": {
+        "name": "Resume print"
+      },
+      "cancel": {
+        "name": "Cancel print"
+      }
+    },
+    "event": {
+      "print": {
+        "name": "Print",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "started": "Started",
+              "finished": "Finished",
+              "failed": "Failed"
+            }
+          }
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "The 3DSEARCH API key is no longer valid."
+    },
+    "update_failed": {
+      "message": "Could not update from 3dsearch.net ({error})."
+    },
+    "command_failed": {
+      "message": "The printer did not accept the command ({error})."
+    }
+  }
+}

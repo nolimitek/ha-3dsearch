@@ -1,0 +1,195 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "3DSEARCH verbinden",
+        "description": "Erstelle auf 3dsearch.net unter Drucker & Filament → Einstellungen → Home Assistant ({settings_url}) einen Schlüssel und füge ihn hier ein.",
+        "data": {
+          "api_key": "API-Schlüssel"
+        },
+        "data_description": {
+          "api_key": "Beginnt mit 3ds_. Er wird beim Erstellen nur einmal angezeigt."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Neuen API-Schlüssel eingeben",
+        "description": "Der gespeicherte Schlüssel funktioniert nicht mehr – vermutlich wurde er gesperrt. Erstelle unter {settings_url} einen neuen.",
+        "data": {
+          "api_key": "API-Schlüssel"
+        },
+        "data_description": {
+          "api_key": "Beginnt mit 3ds_. Er wird beim Erstellen nur einmal angezeigt."
+        }
+      }
+    },
+    "error": {
+      "invalid_key": "Dieser Schlüssel ist ungültig. Kopiere ihn erneut oder erstelle einen neuen.",
+      "not_allowed": "Drucker & Filament ist für dieses 3DSEARCH-Konto nicht verfügbar.",
+      "cannot_connect": "3dsearch.net ist nicht erreichbar. Versuche es gleich noch einmal."
+    },
+    "abort": {
+      "already_configured": "Dieses 3DSEARCH-Konto ist bereits eingerichtet.",
+      "reauth_successful": "Der neue Schlüssel ist gespeichert.",
+      "wrong_account": "Dieser Schlüssel gehört zu einem anderen 3DSEARCH-Konto."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Optionen",
+        "data": {
+          "scan_interval": "Abfrageintervall"
+        },
+        "data_description": {
+          "scan_interval": "Wie oft Home Assistant bei 3dsearch.net nachfragt (Sekunden). Drucker-Clouds werden höchstens einmal pro Minute abgeglichen."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "idle": "Bereit",
+          "printing": "Druckt",
+          "paused": "Pausiert",
+          "error": "Fehler",
+          "offline": "Offline"
+        },
+        "state_attributes": {
+          "error": {
+            "name": "Fehler"
+          },
+          "provider": {
+            "name": "Anbindung"
+          },
+          "last_update": {
+            "name": "Letzte Aktualisierung"
+          }
+        }
+      },
+      "progress": {
+        "name": "Fortschritt"
+      },
+      "remaining_time": {
+        "name": "Restzeit"
+      },
+      "end_time": {
+        "name": "Voraussichtliches Ende"
+      },
+      "job_name": {
+        "name": "Druckauftrag"
+      },
+      "current_layer": {
+        "name": "Aktuelle Schicht",
+        "state_attributes": {
+          "total_layers": {
+            "name": "Schichten gesamt"
+          }
+        }
+      },
+      "nozzle_temperature": {
+        "name": "Düsentemperatur"
+      },
+      "bed_temperature": {
+        "name": "Betttemperatur"
+      },
+      "slot": {
+        "name": "Fach {slot}",
+        "state_attributes": {
+          "material": {
+            "name": "Material"
+          },
+          "color": {
+            "name": "Farbe"
+          },
+          "spool_id": {
+            "name": "Spulen-ID"
+          },
+          "spool_name": {
+            "name": "Spule"
+          },
+          "brand": {
+            "name": "Marke"
+          },
+          "remaining_percent": {
+            "name": "Rest (%)"
+          },
+          "spool_weight": {
+            "name": "Spulengewicht"
+          }
+        }
+      },
+      "spools": {
+        "name": "Spulen im Lager"
+      },
+      "filament_stock": {
+        "name": "Filament im Lager"
+      },
+      "low_spools": {
+        "name": "Spulen fast leer",
+        "state_attributes": {
+          "threshold_g": {
+            "name": "Schwelle (g)"
+          },
+          "spools": {
+            "name": "Spulen"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "online": {
+        "name": "Online"
+      },
+      "printing": {
+        "name": "Druckt"
+      },
+      "problem": {
+        "name": "Problem",
+        "state_attributes": {
+          "error": {
+            "name": "Fehler"
+          }
+        }
+      }
+    },
+    "button": {
+      "pause": {
+        "name": "Druck pausieren"
+      },
+      "resume": {
+        "name": "Druck fortsetzen"
+      },
+      "cancel": {
+        "name": "Druck abbrechen"
+      }
+    },
+    "event": {
+      "print": {
+        "name": "Druck",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "started": "Gestartet",
+              "finished": "Fertig",
+              "failed": "Fehlgeschlagen"
+            }
+          }
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "Der 3DSEARCH-API-Schlüssel ist nicht mehr gültig."
+    },
+    "update_failed": {
+      "message": "Aktualisierung von 3dsearch.net fehlgeschlagen ({error})."
+    },
+    "command_failed": {
+      "message": "Der Drucker hat den Befehl nicht angenommen ({error})."
+    }
+  }
+}
