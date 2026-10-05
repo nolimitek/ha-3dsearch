@@ -21,6 +21,7 @@ from homeassistant.util import dt as dt_util
 from .const import STATES
 from .coordinator import ThreeDSearchConfigEntry, ThreeDSearchCoordinator
 from .entity import PrinterEntity, ThreeDSearchEntity, add_printer_entities, add_spool_entities
+from .picture import spool_picture
 
 
 def _ts(value: str | None) -> datetime | None:
@@ -154,6 +155,11 @@ class SlotSensor(PrinterEntity, SensorEntity):
         return spool.get("left") if spool else None
 
     @property
+    def entity_picture(self) -> str | None:
+        spool = self.slot.get("spool") or {}
+        return spool_picture(self.slot.get("color") or spool.get("color"), spool.get("pct"))
+
+    @property
     def extra_state_attributes(self) -> dict[str, Any]:
         slot = self.slot
         spool = slot.get("spool") or {}
@@ -247,6 +253,11 @@ class SpoolSensor(ThreeDSearchEntity, SensorEntity):
     @property
     def native_value(self) -> int | None:
         return (self.coordinator.spool(self.spool_id) or {}).get("left")
+
+    @property
+    def entity_picture(self) -> str | None:
+        spool = self.coordinator.spool(self.spool_id) or {}
+        return spool_picture(spool.get("color"), spool.get("pct"))
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:

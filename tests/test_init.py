@@ -168,6 +168,14 @@ async def test_spool_sensors(hass: HomeAssistant, aioclient_mock, payload) -> No
     blue = hass.states.get("sensor.3dsearch_pla_blue")
     assert blue.state == "358" and blue.attributes["unit_of_measurement"] == "g"
     assert blue.attributes["printer"] == "Printsaurus" and blue.attributes["slot"] == "1" and blue.attributes["location"] == "ACE Pro"
+    pic = blue.attributes["entity_picture"]
+    assert pic.startswith("data:image/svg+xml;base64,")
+    import base64
+    svg = base64.b64decode(pic.split(",", 1)[1]).decode()
+    assert "#0047bb" in svg and "<script" not in svg
+    assert hass.states.get("sensor.printsaurus_slot_1").attributes["entity_picture"].startswith("data:image/svg+xml")
+    assert "entity_picture" not in hass.states.get("sensor.printsaurus_slot_2").attributes or \
+        hass.states.get("sensor.printsaurus_slot_2").attributes["entity_picture"]   # PETG slot has a colour, no spool
     black = hass.states.get("sensor.3dsearch_black_pla")
     assert black.state == "80" and black.attributes["printer"] is None and black.attributes["location"] == "Shelf"
 

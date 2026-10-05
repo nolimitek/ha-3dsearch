@@ -10,7 +10,7 @@
  */
 (() => {
 "use strict";
-const VERSION = "0.3.0";
+const VERSION = "0.3.1";
 const DOMAIN = "3dsearch";
 
 const I18N = {
@@ -60,6 +60,19 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 const hex = (c) => (typeof c === "string" && /^#[0-9a-f]{6}$/i.test(c) ? c : null);
 const svg = (d, size = 18) => `<svg viewBox="0 0 24 24" width="${size}" height="${size}" aria-hidden="true"><path fill="currentColor" d="${d}"/></svg>`;
 const usable = (st) => st && st.state !== "unavailable" && st.state !== "unknown";
+
+/** Filament spool in its real colour; the winding shrinks with the remaining amount (same drawing as the entity pictures). */
+function spoolSvg(color, percent, size) {
+  const c = hex(color);
+  if (!c) return `<span class="spool none" style="width:${size}px;height:${size}px"></span>`;
+  const p = typeof percent === "number" ? Math.max(0, Math.min(100, percent)) : 100;
+  const hub = 7.5, full = 17.5, r = hub + 2.0 + (full - hub - 2.0) * p / 100;
+  const lines = [1, 2, 3, 4].map((i) => hub + 2.2 * i).filter((x) => x < r - 0.8)
+    .map((x) => `<circle cx="20" cy="20" r="${x.toFixed(1)}" fill="none" stroke="#000" stroke-opacity=".13" stroke-width=".6"/>`).join("");
+  return `<svg class="spool" viewBox="0 0 40 40" width="${size}" height="${size}" aria-hidden="true"><circle cx="20" cy="20" r="19.5" fill="#5b6370"/>
+    <circle cx="20" cy="20" r="${full}" fill="#c7ccd4"/>${p > 0 ? `<circle cx="20" cy="20" r="${r.toFixed(1)}" fill="${c}"/>${lines}` : ""}
+    <circle cx="20" cy="20" r="${hub}" fill="#5b6370"/><circle cx="20" cy="20" r="3.2" fill="#eef0f3"/></svg>`;
+}
 
 function lang(hass) {
   const l = (hass?.locale?.language || hass?.language || "en").slice(0, 2);
@@ -134,6 +147,8 @@ const BASE_CSS = `
   .sec { margin-top: 14px; }
   .lbl { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--secondary-text-color); margin-bottom: 8px; }
   button { font: inherit; }
+  .spool { display: block; flex: none; }
+  .spool.none { box-sizing: border-box; border-radius: 50%; border: 2px dashed var(--divider-color, rgba(127,127,127,.4)); }
 `;
 
 // ── Printer card ─────────────────────────────────────────────────────────────
@@ -217,7 +232,7 @@ class ThreeDSearchPrinterCard extends HTMLElement {
       const pct = typeof a.remaining_percent === "number" ? Math.max(0, Math.min(100, a.remaining_percent)) : null;
       const grams = usable(s) ? `${fmtNum(s.state, hass)} g` : t.noSpool;
       return `<button class="slot" data-id="${esc(id)}" title="${esc([a.spool_name, a.brand].filter(Boolean).join(" · ") || a.material || "")}">
-        <span class="spool${col ? "" : " none"}" style="${col ? `--c:${col}` : ""}"></span>
+        ${spoolSvg(col, pct, 34)}
         <span class="sl">${esc(a.slot ?? "")}</span>
         <span class="mat">${esc(a.material || "–")}</span>
         <span class="g">${esc(grams)}</span>
@@ -289,10 +304,7 @@ const PRINTER_CSS = `
   .slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; }
   .slot { display: grid; justify-items: center; gap: 2px; padding: 10px 6px 8px; border-radius: 12px; cursor: pointer; text-align: center;
           border: 1px solid var(--divider-color, rgba(127,127,127,.25)); background: none; color: var(--primary-text-color); min-width: 0; }
-  .spool { width: 30px; height: 30px; border-radius: 50%; margin-bottom: 4px; box-sizing: border-box;
-           background: radial-gradient(circle, var(--card-background-color, #fff) 0 5px, var(--c) 6px);
-           box-shadow: inset 0 0 0 1px rgba(0,0,0,.12), 0 0 0 1px color-mix(in srgb, var(--primary-text-color, #888) 28%, transparent); }
-  .spool.none { background: none; border: 2px dashed var(--divider-color, rgba(127,127,127,.4)); box-shadow: none; }
+  .slot .spool { margin-bottom: 4px; }
   .sl { font-size: 11px; color: var(--secondary-text-color); }
   .mat { font-size: 13px; font-weight: 600; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .g { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; }
@@ -358,7 +370,7 @@ class ThreeDSearchStockCard extends HTMLElement {
       const meta = [a.material, a.brand].filter(Boolean).map(esc).join(" · ");
       const pct = typeof a.remaining_percent === "number" ? Math.max(0, Math.min(100, a.remaining_percent)) : null;
       return `<li data-id="${esc(x.id)}" class="${isLow(x) ? "low" : ""}">
-        <span class="dot" style="${col ? `--c:${col}` : ""}"></span>
+        ${spoolSvg(col, typeof a.remaining_percent === "number" ? a.remaining_percent : null, 28)}
         <span class="ln"><b>${esc(a.spool_name || "")}</b><small>${meta}${meta && where ? " · " : ""}${a.printer ? `<em>${where}</em>` : where}</small></span>
         <span class="lg"><b>${x.g !== null ? esc(fmtNum(x.g, hass)) + " g" : "–"}</b>${pct !== null ? `<span class="fill"><i style="width:${pct}%"></i></span>` : ""}</span>
       </li>`;
@@ -394,9 +406,7 @@ const STOCK_CSS = `
   li { display: flex; align-items: center; gap: 10px; padding: 8px 0; min-width: 0; cursor: pointer;
        border-top: 1px solid var(--divider-color, rgba(127,127,127,.18)); }
   li:first-child { border-top: 0; }
-  .dot { width: 22px; height: 22px; border-radius: 50%; flex: none; box-sizing: border-box;
-         background: radial-gradient(circle, var(--card-background-color, #fff) 0 3px, var(--c, transparent) 4px);
-         box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-text-color, #888) 28%, transparent); }
+  li .spool { flex: none; }
   .ln { flex: 1; min-width: 0; display: grid; }
   .ln b { font-size: 14px; font-weight: 600; color: var(--primary-text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .ln small { font-size: 12px; color: var(--secondary-text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
