@@ -36,9 +36,35 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     manifest = json.loads(await hass.async_add_executor_job((Path(__file__).parent / "manifest.json").read_text))
     await hass.http.async_register_static_paths([StaticPathConfig(CARD_URL, str(CARD_FILE), False)])
     # The version in the URL makes browsers load the new card after an update
-    add_extra_js_url(hass, f"{CARD_URL}?v={manifest.get('version', '0')}")
+    url = f"{CARD_URL}?v={manifest.get('version', '0')}"
+    add_extra_js_url(hass, url)
+    # The extra module alone is not enough: a page loaded while Home Assistant was starting (typically the
+    # companion app reconnecting after a restart) never gets it. Dashboard resources load with every dashboard.
+    try:
+        await _async_register_resource(hass, url)
+    except Exception:  # noqa: BLE001 — the cards must never block the integration
+        _LOGGER.warning("Could not register the 3DSEARCH cards as a dashboard resource", exc_info=True)
     _LOGGER.debug("3DSEARCH cards registered at %s", CARD_URL)
     return True
+
+
+async def _async_register_resource(hass: HomeAssistant, url: str) -> None:
+    """Add (or update to the current version) the card module in the storage-mode dashboard resources."""
+    from homeassistant.components.lovelace.const import LOVELACE_DATA  # noqa: PLC0415
+
+    data = hass.data.get(LOVELACE_DATA)
+    if data is None or data.resource_mode != "storage":
+        return   # YAML resources are the user's to maintain; the extra module still covers normal page loads
+    resources = data.resources
+    await resources.async_get_info()   # loads the collection from storage
+    ours = [r for r in resources.async_items() if str(r.get("url", "")).split("?")[0] == CARD_URL]
+    if not ours:
+        await resources.async_create_item({"res_type": "module", "url": url})
+        return
+    if ours[0].get("url") != url:
+        await resources.async_update_item(ours[0]["id"], {"res_type": "module", "url": url})
+    for extra in ours[1:]:
+        await resources.async_delete_item(extra["id"])
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ThreeDSearchConfigEntry) -> bool:

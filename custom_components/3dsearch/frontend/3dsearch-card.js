@@ -10,7 +10,7 @@
  */
 (() => {
 "use strict";
-const VERSION = "0.4.2";
+const VERSION = "0.4.3";
 const DOMAIN = "3dsearch";
 
 const I18N = {

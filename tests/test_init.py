@@ -229,3 +229,24 @@ async def test_setup_fails_with_bad_key(hass: HomeAssistant, aioclient_mock) -> 
     await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     assert entry.state is ConfigEntryState.SETUP_ERROR
+
+
+async def test_card_resource_registered_once_and_updated(hass) -> None:
+    """The card module lands in the dashboard resources, follows the version and is never duplicated."""
+    from homeassistant.components.lovelace.const import LOVELACE_DATA
+    from homeassistant.setup import async_setup_component
+
+    import importlib
+
+    mod = importlib.import_module("custom_components.3dsearch")
+    assert await async_setup_component(hass, "lovelace", {})
+    res = hass.data[LOVELACE_DATA].resources
+
+    await mod._async_register_resource(hass, mod.CARD_URL + "?v=0.4.2")
+    await mod._async_register_resource(hass, mod.CARD_URL + "?v=0.4.2")
+    items = [r for r in res.async_items() if r["url"].startswith(mod.CARD_URL)]
+    assert [(r["type"], r["url"]) for r in items] == [("module", mod.CARD_URL + "?v=0.4.2")]
+
+    await mod._async_register_resource(hass, mod.CARD_URL + "?v=0.4.3")
+    items = [r for r in res.async_items() if r["url"].startswith(mod.CARD_URL)]
+    assert [r["url"] for r in items] == [mod.CARD_URL + "?v=0.4.3"]
