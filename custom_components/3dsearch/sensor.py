@@ -157,6 +157,8 @@ class SlotSensor(PrinterEntity, SensorEntity):
         slot = self.slot
         spool = slot.get("spool") or {}
         return {
+            "slot": slot.get("label"),
+            "index": slot.get("index"),
             "material": slot.get("material"),
             "color": slot.get("color"),
             "spool_id": spool.get("id"),

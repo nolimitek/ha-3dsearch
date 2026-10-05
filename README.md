@@ -23,6 +23,23 @@ For the account: **Spools in stock**, **Filament in stock**, **Spools almost emp
 
 The print event is based on the job history of 3dsearch.net, so a print that ends while Home Assistant restarts is still reported.
 
+## Dashboard cards
+
+The integration brings two cards along — no extra download, they appear in the card picker after the restart:
+
+```yaml
+type: custom:threedsearch-printer-card
+device: <printer device>   # pick it in the visual editor
+```
+
+State, progress ring with remaining time and end, temperatures, the filament slots **in their real colours** with remaining grams, and pause/resume/cancel (cancel needs a second tap).
+
+```yaml
+type: custom:threedsearch-stock-card
+```
+
+Filament in stock and the spools that are almost empty.
+
 ## Installation
 
 1. HACS → ⋮ → **Custom repositories** → add `https://github.com/nolimitek/ha-3dsearch`, type **Integration**.

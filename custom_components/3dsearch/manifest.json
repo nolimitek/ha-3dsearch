@@ -1,12 +1,18 @@
 {
   "domain": "3dsearch",
   "name": "3DSEARCH Printers & Filament",
-  "codeowners": ["@nolimitek"],
+  "after_dependencies": [
+    "frontend",
+    "http"
+  ],
+  "codeowners": [
+    "@nolimitek"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/nolimitek/ha-3dsearch",
   "integration_type": "hub",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/nolimitek/ha-3dsearch/issues",
   "requirements": [],
-  "version": "0.1.0"
+  "version": "0.2.0"
 }
