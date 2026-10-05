@@ -162,6 +162,51 @@
           }
         }
       },
+      "box_temperature": {
+        "name": "{box} temperatura",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      },
+      "box_humidity": {
+        "name": "{box} umidità",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      },
+      "box_dry_remaining": {
+        "name": "{box} essiccazione rimanente",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          },
+          "drying": {
+            "name": "In essiccazione"
+          },
+          "target_temperature": {
+            "name": "Temperatura obiettivo"
+          },
+          "duration": {
+            "name": "Durata"
+          },
+          "controllable": {
+            "name": "Controllabile"
+          }
+        }
+      },
       "spools": {
         "name": "Bobine in magazzino"
       },
@@ -192,6 +237,52 @@
         "state_attributes": {
           "error": {
             "name": "Errore"
+          }
+        }
+      }
+    },
+    "number": {
+      "box_dry_temperature": {
+        "name": "{box} temperatura di essiccazione",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      },
+      "box_dry_duration": {
+        "name": "{box} durata essiccazione",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      }
+    },
+    "switch": {
+      "box_drying": {
+        "name": "{box} essiccazione",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          },
+          "target_temperature": {
+            "name": "Temperatura obiettivo"
+          },
+          "remaining_minutes": {
+            "name": "Rimanente (min)"
+          },
+          "duration_minutes": {
+            "name": "Durata (min)"
           }
         }
       }

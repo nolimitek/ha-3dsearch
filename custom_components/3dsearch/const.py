@@ -16,6 +16,14 @@ MAX_SCAN_INTERVAL: Final = 600
 
 # Printer states reported by the server (sensor "status")
 STATES: Final = ["idle", "printing", "paused", "error", "offline"]
+# ACE drying limits (enforced by 3dsearch.net as well)
+DRY_TEMP_MIN: Final = 35
+DRY_TEMP_MAX: Final = 55
+DRY_TEMP_DEFAULT: Final = 45
+DRY_HOURS_MIN: Final = 1
+DRY_HOURS_MAX: Final = 24
+DRY_HOURS_DEFAULT: Final = 4
+
 # Print events (event entity "print")
 EVENT_STARTED: Final = "started"
 EVENT_FINISHED: Final = "finished"

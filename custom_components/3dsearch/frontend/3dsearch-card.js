@@ -10,36 +10,42 @@
  */
 (() => {
 "use strict";
-const VERSION = "0.3.1";
+const VERSION = "0.4.0";
 const DOMAIN = "3dsearch";
 
 const I18N = {
-  en: { all: "Show all ({n})", less: "Show less", lowN: "{n} almost empty", inSlot: "Slot", noSpools: "No spools yet.",
+  en: { dry: "Dry", dryStop: "Stop drying", drying: "Drying", left: "{t} left", dryStart: "Start drying", dryCancel: "Close", dTemp: "Temperature", dHours: "Hours", humidity: "Humidity",
+        all: "Show all ({n})", less: "Show less", lowN: "{n} almost empty", inSlot: "Slot", noSpools: "No spools yet.",
         remaining: "Remaining", ends: "Ends", layer: "Layer", nozzle: "Nozzle", bed: "Bed", pause: "Pause", resume: "Resume", cancel: "Cancel",
         sure: "Really cancel?", slots: "Filament", noSpool: "no spool", stock: "Filament stock", spools: "spools", low: "Almost empty",
         noLow: "No spool is running low.", pick: "Printer", pickHint: "Add a printer in the 3DSEARCH integration first.", lastSeen: "last seen",
         idle: "Idle", printing: "Printing", paused: "Paused", error: "Error", offline: "Offline", today: "today", tomorrow: "tomorrow" },
-  de: { all: "Alle anzeigen ({n})", less: "Weniger anzeigen", lowN: "{n} fast leer", inSlot: "Fach", noSpools: "Noch keine Spulen.",
+  de: { dry: "Trocknen", dryStop: "Trocknen stoppen", drying: "Trocknet", left: "noch {t}", dryStart: "Trocknen starten", dryCancel: "Schließen", dTemp: "Temperatur", dHours: "Stunden", humidity: "Feuchte",
+        all: "Alle anzeigen ({n})", less: "Weniger anzeigen", lowN: "{n} fast leer", inSlot: "Fach", noSpools: "Noch keine Spulen.",
         remaining: "Restzeit", ends: "Ende", layer: "Schicht", nozzle: "Düse", bed: "Bett", pause: "Pause", resume: "Fortsetzen", cancel: "Abbrechen",
         sure: "Wirklich abbrechen?", slots: "Filament", noSpool: "keine Spule", stock: "Filamentlager", spools: "Spulen", low: "Fast leer",
         noLow: "Keine Spule ist fast leer.", pick: "Drucker", pickHint: "Lege zuerst in der 3DSEARCH-Integration einen Drucker an.", lastSeen: "zuletzt",
         idle: "Bereit", printing: "Druckt", paused: "Pausiert", error: "Fehler", offline: "Offline", today: "heute", tomorrow: "morgen" },
-  fr: { all: "Tout afficher ({n})", less: "Afficher moins", lowN: "{n} presque vides", inSlot: "Empl.", noSpools: "Aucune bobine pour l’instant.",
+  fr: { dry: "Sécher", dryStop: "Arrêter le séchage", drying: "Séchage", left: "encore {t}", dryStart: "Lancer le séchage", dryCancel: "Fermer", dTemp: "Température", dHours: "Heures", humidity: "Humidité",
+        all: "Tout afficher ({n})", less: "Afficher moins", lowN: "{n} presque vides", inSlot: "Empl.", noSpools: "Aucune bobine pour l’instant.",
         remaining: "Restant", ends: "Fin", layer: "Couche", nozzle: "Buse", bed: "Plateau", pause: "Pause", resume: "Reprendre", cancel: "Annuler",
         sure: "Vraiment annuler ?", slots: "Filament", noSpool: "pas de bobine", stock: "Stock de filament", spools: "bobines", low: "Presque vides",
         noLow: "Aucune bobine n’est presque vide.", pick: "Imprimante", pickHint: "Ajoutez d’abord une imprimante dans l’intégration 3DSEARCH.", lastSeen: "vue",
         idle: "Prête", printing: "Impression", paused: "En pause", error: "Erreur", offline: "Hors ligne", today: "aujourd’hui", tomorrow: "demain" },
-  es: { all: "Mostrar todas ({n})", less: "Mostrar menos", lowN: "{n} casi vacías", inSlot: "Ranura", noSpools: "Todavía no hay bobinas.",
+  es: { dry: "Secar", dryStop: "Detener secado", drying: "Secando", left: "faltan {t}", dryStart: "Iniciar secado", dryCancel: "Cerrar", dTemp: "Temperatura", dHours: "Horas", humidity: "Humedad",
+        all: "Mostrar todas ({n})", less: "Mostrar menos", lowN: "{n} casi vacías", inSlot: "Ranura", noSpools: "Todavía no hay bobinas.",
         remaining: "Restante", ends: "Fin", layer: "Capa", nozzle: "Boquilla", bed: "Cama", pause: "Pausa", resume: "Reanudar", cancel: "Cancelar",
         sure: "¿Cancelar de verdad?", slots: "Filamento", noSpool: "sin bobina", stock: "Stock de filamento", spools: "bobinas", low: "Casi vacías",
         noLow: "Ninguna bobina está casi vacía.", pick: "Impresora", pickHint: "Añade primero una impresora en la integración 3DSEARCH.", lastSeen: "vista",
         idle: "Lista", printing: "Imprimiendo", paused: "En pausa", error: "Error", offline: "Sin conexión", today: "hoy", tomorrow: "mañana" },
-  it: { all: "Mostra tutte ({n})", less: "Mostra meno", lowN: "{n} quasi vuote", inSlot: "Slot", noSpools: "Ancora nessuna bobina.",
+  it: { dry: "Essiccare", dryStop: "Ferma essiccazione", drying: "In essiccazione", left: "ancora {t}", dryStart: "Avvia essiccazione", dryCancel: "Chiudi", dTemp: "Temperatura", dHours: "Ore", humidity: "Umidità",
+        all: "Mostra tutte ({n})", less: "Mostra meno", lowN: "{n} quasi vuote", inSlot: "Slot", noSpools: "Ancora nessuna bobina.",
         remaining: "Rimanente", ends: "Fine", layer: "Strato", nozzle: "Ugello", bed: "Piatto", pause: "Pausa", resume: "Riprendi", cancel: "Annulla",
         sure: "Annullare davvero?", slots: "Filamento", noSpool: "nessuna bobina", stock: "Scorte di filamento", spools: "bobine", low: "Quasi vuote",
         noLow: "Nessuna bobina è quasi vuota.", pick: "Stampante", pickHint: "Aggiungi prima una stampante nell’integrazione 3DSEARCH.", lastSeen: "vista",
         idle: "Pronta", printing: "In stampa", paused: "In pausa", error: "Errore", offline: "Offline", today: "oggi", tomorrow: "domani" },
-  nl: { all: "Alles tonen ({n})", less: "Minder tonen", lowN: "{n} bijna leeg", inSlot: "Sleuf", noSpools: "Nog geen spoelen.",
+  nl: { dry: "Drogen", dryStop: "Drogen stoppen", drying: "Droogt", left: "nog {t}", dryStart: "Drogen starten", dryCancel: "Sluiten", dTemp: "Temperatuur", dHours: "Uren", humidity: "Vocht",
+        all: "Alles tonen ({n})", less: "Minder tonen", lowN: "{n} bijna leeg", inSlot: "Sleuf", noSpools: "Nog geen spoelen.",
         remaining: "Resterend", ends: "Einde", layer: "Laag", nozzle: "Nozzle", bed: "Bed", pause: "Pauze", resume: "Hervatten", cancel: "Annuleren",
         sure: "Echt annuleren?", slots: "Filament", noSpool: "geen spoel", stock: "Filamentvoorraad", spools: "spoelen", low: "Bijna leeg",
         noLow: "Geen spoel is bijna leeg.", pick: "Printer", pickHint: "Voeg eerst een printer toe in de 3DSEARCH-integratie.", lastSeen: "gezien",
@@ -50,6 +56,8 @@ const ICONS = {
   pause: "M14,19H18V5H14M6,19H10V5H6V19Z",
   play: "M8,5.14V19.14L19,12.14L8,5.14Z",
   stop: "M18,18H6V6H18V18Z",
+  heat: "M15.24,19.66C14.4,20.5 13.25,21 12,21C9.24,21 7,18.76 7,16C7,13.97 8.22,12.24 9.97,11.46L11,16C11,16.55 11.45,17 12,17C12.55,17 13,16.55 13,16L14,11.45C15.75,12.22 17,13.96 17,16C17,17.25 16.5,18.4 15.66,19.24M12,2C12.55,2 13,2.45 13,3V5C13,5.55 12.55,6 12,6C11.45,6 11,5.55 11,5V3C11,2.45 11.45,2 12,2M7.05,4.64L8.46,6.05C8.85,6.44 8.85,7.07 8.46,7.46C8.07,7.85 7.44,7.85 7.05,7.46L5.64,6.05C5.25,5.66 5.25,5.03 5.64,4.64C6.03,4.25 6.66,4.25 7.05,4.64M16.95,4.64C17.34,4.25 17.97,4.25 18.36,4.64C18.75,5.03 18.75,5.66 18.36,6.05L16.95,7.46C16.56,7.85 15.93,7.85 15.54,7.46C15.15,7.07 15.15,6.44 15.54,6.05L16.95,4.64Z",
+  drop: "M12,20A6,6 0 0,1 6,14C6,10 12,3.25 12,3.25C12,3.25 18,10 18,14A6,6 0 0,1 12,20Z",
   nozzle: "M7,2H17V8H19V13H16.5L13,17H11L7.5,13H5V8H7V2M10,22H2V20H10A1,1 0 0,0 11,19V18H13V19A3,3 0 0,1 10,22Z",
   bed: "M2,20V17H22V20H20V22H18V20H6V22H4V20H2M7,12A3,3 0 0,1 10,15H14A3,3 0 0,1 17,12V15H7V12M5,8H19V10H5V8Z",
   layers: "M12,16L19.36,10.27L21,9L12,2L3,9L4.63,10.27M12,18.54L4.62,12.81L3,14.07L12,21.07L21,14.07L19.37,12.8L12,18.54Z",
@@ -85,7 +93,12 @@ function deviceEntities(hass, deviceId) {
   for (const e of Object.values(hass.entities || {})) {
     if (e.platform !== DOMAIN || e.device_id !== deviceId) continue;
     if (e.translation_key === "slot") out.slots.push(e.entity_id);
-    else if (e.translation_key) out[e.translation_key] = e.entity_id;
+    else if (e.translation_key && e.translation_key.startsWith("box_")) {
+      const bid = hass.states[e.entity_id]?.attributes.box_id;
+      if (bid === undefined) continue;
+      (out.boxes ||= {})[bid] ||= { label: hass.states[e.entity_id].attributes.box };
+      out.boxes[bid][e.translation_key.slice(4)] = e.entity_id;
+    } else if (e.translation_key) out[e.translation_key] = e.entity_id;
   }
   out.slots.sort((a, b) => (hass.states[a]?.attributes.index ?? 0) - (hass.states[b]?.attributes.index ?? 0));
   return out;
@@ -171,8 +184,9 @@ class ThreeDSearchPrinterCard extends HTMLElement {
     this._hass = hass;
     // Only re-render when one of this printer's entities changed (hass is set on every state change in HA)
     const ents = this._config?.device ? deviceEntities(hass, this._config.device) : null;
+    const boxIds = ents ? Object.values(ents.boxes || {}).flatMap((b) => Object.entries(b).filter(([k]) => k !== "label").map(([, v]) => v)) : [];
     const ids = ents ? [ents.status, ents.progress, ents.remaining_time, ents.end_time, ents.job_name, ents.current_layer,
-      ents.nozzle_temperature, ents.bed_temperature, ents.pause, ents.resume, ents.cancel, ...ents.slots] : [];
+      ents.nozzle_temperature, ents.bed_temperature, ents.pause, ents.resume, ents.cancel, ...ents.slots, ...boxIds] : [];
     const sig = ids.map((id) => (id && hass.states[id] ? hass.states[id].last_updated + hass.states[id].state : "")).join("|") + (hass.locale?.language || "");
     if (sig === this._sig) return;
     this._sig = sig;
@@ -240,7 +254,12 @@ class ThreeDSearchPrinterCard extends HTMLElement {
       </button>`;
     }).join("");
 
-    const btn = (key, icon, text, cls = "") => { const s = this._st(key); return usable(s) || (s && s.state === "unknown") ? `<button class="act ${cls}" data-press="${key}">${svg(icon, 16)}<span>${esc(this._confirm === key ? t.sure : text)}</span></button>` : ""; };
+    const btn = (key, icon, text, cls = "") => {
+      const s = this._st(key);
+      if (!s) return "";
+      const ok = s.state !== "unavailable";   // pause only while printing, resume only while paused …
+      return `<button class="act ${cls}" data-press="${key}"${ok ? "" : " disabled"}>${svg(icon, 16)}<span>${esc(this._confirm === key ? t.sure : text)}</span></button>`;
+    };
     const actions = btn("pause", ICONS.pause, t.pause) + btn("resume", ICONS.play, t.resume) + btn("cancel", ICONS.stop, t.cancel, "danger");
 
     const err = state === "error" && st.attributes.error ? `<div class="err sec">${esc(st.attributes.error)}</div>` : "";
@@ -257,6 +276,7 @@ class ThreeDSearchPrinterCard extends HTMLElement {
         ${err}${job}
         ${temps ? `<div class="chips sec">${temps}</div>` : ""}
         ${slots ? `<div class="sec"><div class="lbl">${esc(t.slots)}</div><div class="slots">${slots}</div></div>` : ""}
+        ${this._boxesHtml(t)}
         ${actions ? `<div class="acts sec">${actions}</div>` : ""}
         ${seen}
       </ha-card>`;
@@ -264,6 +284,68 @@ class ThreeDSearchPrinterCard extends HTMLElement {
     this.shadowRoot.querySelectorAll("[data-more]").forEach((el) => el.addEventListener("click", () => moreInfo(this, this._ents[el.dataset.more])));
     this.shadowRoot.querySelectorAll("[data-id]").forEach((el) => el.addEventListener("click", () => moreInfo(this, el.dataset.id)));
     this.shadowRoot.querySelectorAll("[data-press]").forEach((el) => el.addEventListener("click", () => this._press(el.dataset.press)));
+    this._bindBoxes();
+  }
+
+  /** One block per ACE/AMS: climate, drying state, and for ACE the drying controls with presets. */
+  _boxesHtml(t) {
+    const hass = this._hass, boxes = this._ents.boxes || {};
+    return Object.entries(boxes).sort(([a], [b]) => a - b).map(([bid, b]) => {
+      const st = (k) => (b[k] ? hass.states[b[k]] : undefined);
+      const sw = st("drying"), rem = st("dry_remaining"), tmp = st("temperature"), hum = st("humidity");
+      const ctl = !!sw && sw.state !== "unavailable";
+      const drying = ctl ? sw.state === "on" : !!rem?.attributes.drying;
+      const target = (ctl ? sw.attributes.target_temperature : rem?.attributes.target_temperature) || null;
+      const left = (ctl ? sw.attributes.remaining_minutes : usable(rem) ? +rem.state : null) || null;
+      const chips = [usable(tmp) ? `<span class="mini" data-eid="${esc(b.temperature)}">${svg(ICONS.heat, 14)}${esc(fmtNum(tmp.state, hass))} °C</span>` : "",
+                     usable(hum) ? `<span class="mini" data-eid="${esc(b.humidity)}">${svg(ICONS.drop, 14)}${esc(fmtNum(hum.state, hass))} %</span>` : ""].join("");
+      if (!ctl && !drying && !chips) return "";
+      const open = this._dryOpen === bid && ctl && !drying;
+      const v = this._dryVals?.[bid] || { temp: +(st("dry_temperature")?.state) || 45, hours: +(st("dry_duration")?.state) || 4 };
+      const presets = [["PLA", 45, 4], ["TPU", 50, 6], ["PETG", 55, 6], ["ABS/ASA", 55, 8]];
+      return `<div class="sec box" data-box="${esc(bid)}">
+        <div class="bxh"><b>${esc(b.label || "Box")}</b>${chips}<span class="grow"></span>
+          ${ctl ? (drying ? `<button class="act sm danger" data-dry="stop">${svg(ICONS.stop, 14)}<span>${esc(t.dryStop)}</span></button>`
+                          : `<button class="act sm" data-dry="${open ? "close" : "open"}">${svg(ICONS.heat, 14)}<span>${esc(open ? t.dryCancel : t.dry)}</span></button>`) : ""}</div>
+        ${drying ? `<div class="dryon" data-eid="${esc(b.drying || b.dry_remaining)}">${svg(ICONS.heat, 16)}<span><b>${esc(t.drying)}</b>${target ? ` · ${esc(target)} °C` : ""}${left ? ` · ${esc(t.left.replace("{t}", fmtMinutes(left)))}` : ""}</span></div>` : ""}
+        ${open ? `<div class="drypanel">
+            <div class="presets">${presets.map(([m, tc, hh]) => `<button data-pre="${tc},${hh}" class="${v.temp === tc && v.hours === hh ? "on" : ""}"><b>${m}</b><span>${tc} °C · ${hh} h</span></button>`).join("")}</div>
+            <div class="dryin"><label>${esc(t.dTemp)}<input type="number" min="35" max="55" step="1" value="${esc(v.temp)}" data-in="temp"> °C</label>
+              <label>${esc(t.dHours)}<input type="number" min="1" max="24" step="1" value="${esc(v.hours)}" data-in="hours"> h</label>
+              <button class="act pri" data-dry="start">${svg(ICONS.heat, 16)}<span>${esc(t.dryStart)}</span></button></div>
+          </div>` : ""}
+      </div>`;
+    }).join("");
+  }
+
+  _bindBoxes() {
+    const root = this.shadowRoot;
+    root.querySelectorAll("[data-eid]").forEach((el) => el.addEventListener("click", () => moreInfo(this, el.dataset.eid)));
+    root.querySelectorAll(".box").forEach((boxEl) => {
+      const bid = boxEl.dataset.box, b = this._ents.boxes[bid];
+      const vals = () => (this._dryVals ||= {})[bid] ||= { temp: +(this._hass.states[b.dry_temperature]?.state) || 45, hours: +(this._hass.states[b.dry_duration]?.state) || 4 };
+      boxEl.querySelectorAll("[data-pre]").forEach((el) => el.addEventListener("click", () => {
+        const [tc, hh] = el.dataset.pre.split(",").map(Number); Object.assign(vals(), { temp: tc, hours: hh }); this._sig = null; this._render();
+      }));
+      boxEl.querySelectorAll("[data-in]").forEach((el) => el.addEventListener("change", () => { vals()[el.dataset.in] = +el.value; }));
+      boxEl.querySelectorAll("[data-dry]").forEach((el) => el.addEventListener("click", async () => {
+        const a = el.dataset.dry;
+        if (a === "open" || a === "close") { this._dryOpen = a === "open" ? bid : null; this._sig = null; this._render(); return; }
+        el.disabled = true;
+        try {
+          if (a === "start") {
+            const v = vals();
+            const temp = Math.max(35, Math.min(55, Math.round(v.temp || 45))), hours = Math.max(1, Math.min(24, Math.round(v.hours || 4)));
+            if (b.dry_temperature) await this._hass.callService("number", "set_value", { entity_id: b.dry_temperature, value: temp });
+            if (b.dry_duration) await this._hass.callService("number", "set_value", { entity_id: b.dry_duration, value: hours });
+            await this._hass.callService("switch", "turn_on", { entity_id: b.drying });
+            this._dryOpen = null;
+          } else {
+            await this._hass.callService("switch", "turn_off", { entity_id: b.drying });
+          }
+        } finally { this._sig = null; this._render(); }
+      }));
+    });
   }
 
   _press(key) {
@@ -316,6 +398,29 @@ const PRINTER_CSS = `
          border: 1px solid var(--divider-color, rgba(127,127,127,.3)); background: none; color: var(--primary-text-color); font-weight: 600; font-size: 13px; }
   .act:hover { background: var(--secondary-background-color, rgba(127,127,127,.08)); }
   .act.danger { color: var(--error-color, #db4437); }
+  .act:disabled { opacity: .4; cursor: default; background: none; }
+  .act.sm { flex: none; padding: 6px 10px; font-size: 12px; }
+  .act.pri { flex: none; background: var(--primary-color, #03a9f4); border-color: transparent; color: var(--text-primary-color, #fff); }
+  .box { border: 1px solid var(--divider-color, rgba(127,127,127,.25)); border-radius: 12px; padding: 10px 12px; }
+  .bxh { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .bxh > b { font-size: 14px; color: var(--primary-text-color); }
+  .grow { flex: 1; }
+  .mini { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--secondary-text-color); cursor: pointer;
+          padding: 2px 8px; border-radius: 999px; background: var(--secondary-background-color, rgba(127,127,127,.1)); }
+  .dryon { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 10px; border-radius: 10px; font-size: 13px; cursor: pointer;
+           color: var(--warning-color, #ffa600); background: color-mix(in srgb, var(--warning-color, #ffa600) 12%, transparent); }
+  .dryon span { color: var(--primary-text-color); }
+  .drypanel { margin-top: 10px; display: grid; gap: 10px; }
+  .presets { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 6px; }
+  .presets button { display: grid; gap: 2px; padding: 8px; border-radius: 10px; cursor: pointer; text-align: left;
+                    border: 1px solid var(--divider-color, rgba(127,127,127,.3)); background: none; color: var(--primary-text-color); }
+  .presets button span { font-size: 12px; color: var(--secondary-text-color); }
+  .presets button.on { border-color: var(--primary-color, #03a9f4); box-shadow: 0 0 0 1px var(--primary-color, #03a9f4); }
+  .dryin { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--secondary-text-color); }
+  .dryin label { display: inline-flex; align-items: center; gap: 6px; }
+  .dryin input { width: 56px; font: inherit; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--divider-color, rgba(127,127,127,.4));
+                 background: var(--card-background-color, #fff); color: var(--primary-text-color); }
+  .dryin .act { margin-left: auto; }
   .err { padding: 10px 12px; border-radius: 10px; font-size: 13px; color: var(--error-color, #db4437);
          background: color-mix(in srgb, var(--error-color, #db4437) 10%, transparent); overflow-wrap: anywhere; }
 `;

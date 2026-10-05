@@ -18,6 +18,9 @@ Per printer (one device each):
 | `binary_sensor` Online, Printing, Problem | Problem = Klipper not ready (with the error message) |
 | `button` Pause / Resume / Cancel print | Anycubic Cloud and Klipper only — Bambu Lab, Creality and Elegoo are read-only |
 | `event` Print | `started`, `finished`, `failed` — for automations |
+| `switch` ACE *n* drying | start/stop drying (ACE via Anycubic Cloud or Klipper with Rinkhals) using the two settings below |
+| `number` ACE *n* drying temperature / duration | 35–55 °C, 1–24 h — kept in Home Assistant |
+| `sensor` Box temperature / humidity / drying time remaining | ACE, AMS (Bambu AMS drying is shown, not controllable) |
 
 For the account: **Spools in stock**, **Filament in stock**, **Spools almost empty** (with the list of spools), and **one sensor per spool** (remaining grams; brand, material, colour, storage location and — when loaded — printer and slot as attributes). Spools added on 3dsearch.net appear automatically; archived ones become unavailable.
 
@@ -32,7 +35,7 @@ type: custom:threedsearch-printer-card
 device: <printer device>   # pick it in the visual editor
 ```
 
-State, progress ring with remaining time and end, temperatures, the filament slots **in their real colours** with remaining grams, and pause/resume/cancel (cancel needs a second tap).
+State, progress ring with remaining time and end, temperatures, the filament slots **in their real colours** with remaining grams, pause/resume/cancel (cancel needs a second tap), and one block per ACE/AMS with temperature, humidity and drying — start drying with presets (PLA 45 °C/4 h, TPU 50 °C/6 h, PETG 55 °C/6 h, ABS/ASA 55 °C/8 h) or your own values.
 
 ```yaml
 type: custom:threedsearch-stock-card

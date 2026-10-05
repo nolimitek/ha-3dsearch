@@ -111,3 +111,27 @@ def add_printer_entities(entry, coordinator: ThreeDSearchCoordinator, async_add_
 
     _add()
     entry.async_on_unload(coordinator.async_add_listener(_add))
+
+
+class BoxEntity(PrinterEntity):
+    """Entity of one filament box (ACE, AMS, CFS) of a printer — on the printer device."""
+
+    def __init__(self, coordinator: ThreeDSearchCoordinator, printer_id: str, box: dict[str, Any], key: str) -> None:
+        super().__init__(coordinator, printer_id, f"box{box['id']}_{key}")
+        self.box_id = box["id"]
+        self._attr_translation_key = f"box_{key}"
+        self._attr_translation_placeholders = {"box": str(box.get("label") or f"Box {box['id'] + 1}")}
+
+    @property
+    def box(self) -> dict[str, Any]:
+        """Latest data of this box (empty when it disappeared)."""
+        return next((b for b in self.printer.get("boxes") or [] if b.get("id") == self.box_id), {})
+
+    @property
+    def available(self) -> bool:
+        return super().available and bool(self.box)
+
+    @property
+    def box_attributes(self) -> dict[str, Any]:
+        """Lets the dashboard card group the entities of one box."""
+        return {"box_id": self.box_id, "box": self._attr_translation_placeholders["box"]}

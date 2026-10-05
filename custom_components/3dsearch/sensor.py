@@ -20,7 +20,7 @@ from homeassistant.util import dt as dt_util
 
 from .const import STATES
 from .coordinator import ThreeDSearchConfigEntry, ThreeDSearchCoordinator
-from .entity import PrinterEntity, ThreeDSearchEntity, add_printer_entities, add_spool_entities
+from .entity import BoxEntity, PrinterEntity, ThreeDSearchEntity, add_printer_entities, add_spool_entities
 from .picture import spool_picture
 
 
@@ -98,6 +98,13 @@ async def async_setup_entry(
         }
         for slot in printer.get("slots") or []:
             out[f"{printer_id}_slot_{slot['index']}"] = SlotSensor(coordinator, printer_id, slot)
+        for box in printer.get("boxes") or []:
+            # Climate sensors only once the box reports a value (the ACE Pro has no humidity sensor)
+            if box.get("temp") is not None:
+                out[f"{printer_id}_box{box['id']}_temperature"] = BoxSensor(coordinator, printer_id, box, "temperature")
+            if box.get("humidity") is not None:
+                out[f"{printer_id}_box{box['id']}_humidity"] = BoxSensor(coordinator, printer_id, box, "humidity")
+            out[f"{printer_id}_box{box['id']}_dry_remaining"] = BoxSensor(coordinator, printer_id, box, "dry_remaining")
         return out
 
     add_printer_entities(entry, coordinator, async_add_entities, factory)
@@ -275,3 +282,39 @@ class SpoolSensor(ThreeDSearchEntity, SensorEntity):
             "printer": loaded.get("printer"),
             "slot": loaded.get("slot"),
         }
+
+
+class BoxSensor(BoxEntity, SensorEntity):
+    """Temperature / humidity inside a box, remaining drying time."""
+
+    def __init__(self, coordinator: ThreeDSearchCoordinator, printer_id: str, box: dict[str, Any], key: str) -> None:
+        super().__init__(coordinator, printer_id, box, key)
+        self.key = key
+        if key == "temperature":
+            self._attr_device_class = SensorDeviceClass.TEMPERATURE
+            self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
+            self._attr_state_class = SensorStateClass.MEASUREMENT
+        elif key == "humidity":
+            self._attr_device_class = SensorDeviceClass.HUMIDITY
+            self._attr_native_unit_of_measurement = PERCENTAGE
+            self._attr_state_class = SensorStateClass.MEASUREMENT
+        else:
+            self._attr_device_class = SensorDeviceClass.DURATION
+            self._attr_native_unit_of_measurement = UnitOfTime.MINUTES
+
+    @property
+    def native_value(self) -> int | None:
+        box = self.box
+        if self.key == "temperature":
+            return box.get("temp")
+        if self.key == "humidity":
+            return box.get("humidity")
+        return box.get("dry_remain_min") if box.get("drying") else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        if self.key != "dry_remaining":
+            return self.box_attributes
+        box = self.box
+        return {**self.box_attributes, "drying": bool(box.get("drying")), "target_temperature": box.get("dry_target"),
+                "duration": box.get("dry_duration_min"), "controllable": bool(box.get("control"))}

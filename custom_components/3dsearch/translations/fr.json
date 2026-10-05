@@ -162,6 +162,51 @@
           }
         }
       },
+      "box_temperature": {
+        "name": "{box} température",
+        "state_attributes": {
+          "box_id": {
+            "name": "Boîtier"
+          },
+          "box": {
+            "name": "Boîtier"
+          }
+        }
+      },
+      "box_humidity": {
+        "name": "{box} humidité",
+        "state_attributes": {
+          "box_id": {
+            "name": "Boîtier"
+          },
+          "box": {
+            "name": "Boîtier"
+          }
+        }
+      },
+      "box_dry_remaining": {
+        "name": "{box} séchage restant",
+        "state_attributes": {
+          "box_id": {
+            "name": "Boîtier"
+          },
+          "box": {
+            "name": "Boîtier"
+          },
+          "drying": {
+            "name": "Séchage"
+          },
+          "target_temperature": {
+            "name": "Température cible"
+          },
+          "duration": {
+            "name": "Durée"
+          },
+          "controllable": {
+            "name": "Pilotable"
+          }
+        }
+      },
       "spools": {
         "name": "Bobines en stock"
       },
@@ -192,6 +237,52 @@
         "state_attributes": {
           "error": {
             "name": "Erreur"
+          }
+        }
+      }
+    },
+    "number": {
+      "box_dry_temperature": {
+        "name": "{box} température de séchage",
+        "state_attributes": {
+          "box_id": {
+            "name": "Boîtier"
+          },
+          "box": {
+            "name": "Boîtier"
+          }
+        }
+      },
+      "box_dry_duration": {
+        "name": "{box} durée de séchage",
+        "state_attributes": {
+          "box_id": {
+            "name": "Boîtier"
+          },
+          "box": {
+            "name": "Boîtier"
+          }
+        }
+      }
+    },
+    "switch": {
+      "box_drying": {
+        "name": "{box} séchage",
+        "state_attributes": {
+          "box_id": {
+            "name": "Boîtier"
+          },
+          "box": {
+            "name": "Boîtier"
+          },
+          "target_temperature": {
+            "name": "Température cible"
+          },
+          "remaining_minutes": {
+            "name": "Restant (min)"
+          },
+          "duration_minutes": {
+            "name": "Durée (min)"
           }
         }
       }

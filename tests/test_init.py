@@ -188,6 +188,40 @@ async def test_spool_sensors(hass: HomeAssistant, aioclient_mock, payload) -> No
     assert hass.states.get("sensor.3dsearch_black_pla").state == STATE_UNAVAILABLE
 
 
+async def test_drying(hass: HomeAssistant, aioclient_mock, payload) -> None:
+    entry = await _setup(hass, aioclient_mock, payload)
+    sw = "switch.printsaurus_ace_1_drying"
+    assert hass.states.get(sw).state == "off"
+    assert hass.states.get("number.printsaurus_ace_1_drying_temperature").state == "45"
+    assert hass.states.get("number.printsaurus_ace_1_drying_duration").state == "4"
+    assert hass.states.get("sensor.printsaurus_ace_1_temperature").state == "31"
+    assert hass.states.get("sensor.printsaurus_ace_1_humidity") is None          # ACE Pro: no humidity sensor
+    # Bambu AMS: climate + drying state, but read-only (no switch, no settings)
+    assert hass.states.get("sensor.x1c_ams_1_humidity").state == "18"
+    rem = hass.states.get("sensor.x1c_ams_1_drying_time_remaining")
+    assert rem.state == "128" and rem.attributes["target_temperature"] == 65 and rem.attributes["controllable"] is False
+    assert hass.states.get("switch.x1c_ams_1_drying") is None
+
+    # Start with the box settings → dry_start with minutes; switch shows "on" right away
+    await hass.services.async_call("number", "set_value", {"entity_id": "number.printsaurus_ace_1_drying_temperature", "value": 55}, blocking=True)
+    await hass.services.async_call("number", "set_value", {"entity_id": "number.printsaurus_ace_1_drying_duration", "value": 6}, blocking=True)
+    aioclient_mock.post(API_URL, json={"ok": True})
+    await hass.services.async_call("switch", "turn_on", {"entity_id": sw}, blocking=True)
+    post = [c for c in aioclient_mock.mock_calls if c[0] == "POST"]
+    assert post[-1][2] == {"printer": "a3c12bb1ca4ea642", "cmd": "dry_start", "box": 0, "temp": 55, "minutes": 360}
+    assert hass.states.get(sw).state == "on"
+
+    # Server confirms, then stop
+    payload["printers"][0]["boxes"][0].update(drying=True, dry_target=55, dry_remain_min=359, dry_duration_min=360)
+    await _refresh(hass, entry, aioclient_mock, payload)
+    assert hass.states.get(sw).attributes["remaining_minutes"] == 359
+    assert hass.states.get("sensor.printsaurus_ace_1_drying_time_remaining").state == "359"
+    aioclient_mock.post(API_URL, json={"ok": True})
+    await hass.services.async_call("switch", "turn_off", {"entity_id": sw}, blocking=True)
+    post = [c for c in aioclient_mock.mock_calls if c[0] == "POST"]
+    assert post[-1][2] == {"printer": "a3c12bb1ca4ea642", "cmd": "dry_stop", "box": 0}
+
+
 async def test_setup_fails_with_bad_key(hass: HomeAssistant, aioclient_mock) -> None:
     entry = MockConfigEntry(domain=DOMAIN, unique_id="1", data={"api_key": KEY})
     entry.add_to_hass(hass)

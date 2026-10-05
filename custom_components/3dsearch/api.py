@@ -57,6 +57,6 @@ class ThreeDSearchApi:
         """Return printers, slots and spool stock in one call."""
         return await self._request("GET")
 
-    async def command(self, printer_id: str, cmd: str) -> None:
-        """Pause, resume or stop a print (Anycubic Cloud and Klipper agent printers only)."""
-        await self._request("POST", {"printer": printer_id, "cmd": cmd})
+    async def command(self, printer_id: str, cmd: str, **params: Any) -> None:
+        """Pause/resume/stop a print or start/stop drying (Anycubic Cloud and Klipper agent printers only)."""
+        await self._request("POST", {"printer": printer_id, "cmd": cmd, **params})

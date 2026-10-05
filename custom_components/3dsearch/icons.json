@@ -43,6 +43,9 @@
       "spool": {
         "default": "mdi:album"
       },
+      "box_dry_remaining": {
+        "default": "mdi:timer-sand"
+      },
       "low_spools": {
         "default": "mdi:alert-outline"
       }
@@ -50,6 +53,22 @@
     "binary_sensor": {
       "printing": {
         "default": "mdi:printer-3d-nozzle"
+      }
+    },
+    "number": {
+      "box_dry_temperature": {
+        "default": "mdi:thermometer"
+      },
+      "box_dry_duration": {
+        "default": "mdi:timer-outline"
+      }
+    },
+    "switch": {
+      "box_drying": {
+        "default": "mdi:heat-wave",
+        "state": {
+          "off": "mdi:tumble-dryer-off"
+        }
       }
     },
     "button": {

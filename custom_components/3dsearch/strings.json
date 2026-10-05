@@ -162,6 +162,51 @@
           }
         }
       },
+      "box_temperature": {
+        "name": "{box} temperature",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      },
+      "box_humidity": {
+        "name": "{box} humidity",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      },
+      "box_dry_remaining": {
+        "name": "{box} drying time remaining",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          },
+          "drying": {
+            "name": "Drying"
+          },
+          "target_temperature": {
+            "name": "Target temperature"
+          },
+          "duration": {
+            "name": "Duration"
+          },
+          "controllable": {
+            "name": "Controllable"
+          }
+        }
+      },
       "spools": {
         "name": "Spools in stock"
       },
@@ -192,6 +237,52 @@
         "state_attributes": {
           "error": {
             "name": "Error"
+          }
+        }
+      }
+    },
+    "number": {
+      "box_dry_temperature": {
+        "name": "{box} drying temperature",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      },
+      "box_dry_duration": {
+        "name": "{box} drying duration",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      }
+    },
+    "switch": {
+      "box_drying": {
+        "name": "{box} drying",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          },
+          "target_temperature": {
+            "name": "Target temperature"
+          },
+          "remaining_minutes": {
+            "name": "Remaining (min)"
+          },
+          "duration_minutes": {
+            "name": "Duration (min)"
           }
         }
       }

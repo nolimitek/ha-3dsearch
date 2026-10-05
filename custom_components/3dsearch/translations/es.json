@@ -162,6 +162,51 @@
           }
         }
       },
+      "box_temperature": {
+        "name": "{box} temperatura",
+        "state_attributes": {
+          "box_id": {
+            "name": "Caja"
+          },
+          "box": {
+            "name": "Caja"
+          }
+        }
+      },
+      "box_humidity": {
+        "name": "{box} humedad",
+        "state_attributes": {
+          "box_id": {
+            "name": "Caja"
+          },
+          "box": {
+            "name": "Caja"
+          }
+        }
+      },
+      "box_dry_remaining": {
+        "name": "{box} secado restante",
+        "state_attributes": {
+          "box_id": {
+            "name": "Caja"
+          },
+          "box": {
+            "name": "Caja"
+          },
+          "drying": {
+            "name": "Secando"
+          },
+          "target_temperature": {
+            "name": "Temperatura objetivo"
+          },
+          "duration": {
+            "name": "Duración"
+          },
+          "controllable": {
+            "name": "Controlable"
+          }
+        }
+      },
       "spools": {
         "name": "Bobinas en stock"
       },
@@ -192,6 +237,52 @@
         "state_attributes": {
           "error": {
             "name": "Error"
+          }
+        }
+      }
+    },
+    "number": {
+      "box_dry_temperature": {
+        "name": "{box} temperatura de secado",
+        "state_attributes": {
+          "box_id": {
+            "name": "Caja"
+          },
+          "box": {
+            "name": "Caja"
+          }
+        }
+      },
+      "box_dry_duration": {
+        "name": "{box} duración del secado",
+        "state_attributes": {
+          "box_id": {
+            "name": "Caja"
+          },
+          "box": {
+            "name": "Caja"
+          }
+        }
+      }
+    },
+    "switch": {
+      "box_drying": {
+        "name": "{box} secado",
+        "state_attributes": {
+          "box_id": {
+            "name": "Caja"
+          },
+          "box": {
+            "name": "Caja"
+          },
+          "target_temperature": {
+            "name": "Temperatura objetivo"
+          },
+          "remaining_minutes": {
+            "name": "Restante (min)"
+          },
+          "duration_minutes": {
+            "name": "Duración (min)"
           }
         }
       }

@@ -162,6 +162,51 @@
           }
         }
       },
+      "box_temperature": {
+        "name": "{box} temperatuur",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      },
+      "box_humidity": {
+        "name": "{box} luchtvochtigheid",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      },
+      "box_dry_remaining": {
+        "name": "{box} droogtijd resterend",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          },
+          "drying": {
+            "name": "Droogt"
+          },
+          "target_temperature": {
+            "name": "Doeltemperatuur"
+          },
+          "duration": {
+            "name": "Duur"
+          },
+          "controllable": {
+            "name": "Bestuurbaar"
+          }
+        }
+      },
       "spools": {
         "name": "Spoelen op voorraad"
       },
@@ -192,6 +237,52 @@
         "state_attributes": {
           "error": {
             "name": "Fout"
+          }
+        }
+      }
+    },
+    "number": {
+      "box_dry_temperature": {
+        "name": "{box} droogtemperatuur",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      },
+      "box_dry_duration": {
+        "name": "{box} droogduur",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      }
+    },
+    "switch": {
+      "box_drying": {
+        "name": "{box} drogen",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          },
+          "target_temperature": {
+            "name": "Doeltemperatuur"
+          },
+          "remaining_minutes": {
+            "name": "Resterend (min)"
+          },
+          "duration_minutes": {
+            "name": "Duur (min)"
           }
         }
       }

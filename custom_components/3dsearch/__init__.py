@@ -18,7 +18,9 @@ from .coordinator import ThreeDSearchConfigEntry, ThreeDSearchCoordinator
 from .entity import account_device
 
 _LOGGER = logging.getLogger(__name__)
-PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.BUTTON, Platform.EVENT, Platform.SENSOR]
+PLATFORMS: list[Platform] = [
+    Platform.BINARY_SENSOR, Platform.BUTTON, Platform.EVENT, Platform.NUMBER, Platform.SENSOR, Platform.SWITCH,
+]
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 CARD_URL = "/3dsearch/3dsearch-card.js"
 CARD_FILE = Path(__file__).parent / "frontend" / "3dsearch-card.js"

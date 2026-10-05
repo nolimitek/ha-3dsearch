@@ -162,6 +162,51 @@
           }
         }
       },
+      "box_temperature": {
+        "name": "{box} Temperatur",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      },
+      "box_humidity": {
+        "name": "{box} Luftfeuchtigkeit",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      },
+      "box_dry_remaining": {
+        "name": "{box} Trocknung Restzeit",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          },
+          "drying": {
+            "name": "Trocknet"
+          },
+          "target_temperature": {
+            "name": "Zieltemperatur"
+          },
+          "duration": {
+            "name": "Dauer"
+          },
+          "controllable": {
+            "name": "Steuerbar"
+          }
+        }
+      },
       "spools": {
         "name": "Spulen im Lager"
       },
@@ -192,6 +237,52 @@
         "state_attributes": {
           "error": {
             "name": "Fehler"
+          }
+        }
+      }
+    },
+    "number": {
+      "box_dry_temperature": {
+        "name": "{box} Trocknungstemperatur",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      },
+      "box_dry_duration": {
+        "name": "{box} Trocknungsdauer",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          }
+        }
+      }
+    },
+    "switch": {
+      "box_drying": {
+        "name": "{box} Trocknen",
+        "state_attributes": {
+          "box_id": {
+            "name": "Box"
+          },
+          "box": {
+            "name": "Box"
+          },
+          "target_temperature": {
+            "name": "Zieltemperatur"
+          },
+          "remaining_minutes": {
+            "name": "Rest (min)"
+          },
+          "duration_minutes": {
+            "name": "Dauer (min)"
           }
         }
       }
