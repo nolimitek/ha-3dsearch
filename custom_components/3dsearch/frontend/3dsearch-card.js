@@ -10,7 +10,7 @@
  */
 (() => {
 "use strict";
-const VERSION = "0.4.3";
+const VERSION = "0.4.4";
 const DOMAIN = "3dsearch";
 
 const I18N = {
@@ -245,9 +245,9 @@ class ThreeDSearchPrinterCard extends HTMLElement {
       const a = s.attributes, col = hex(a.color);
       const pct = typeof a.remaining_percent === "number" ? Math.max(0, Math.min(100, a.remaining_percent)) : null;
       const grams = usable(s) ? `${fmtNum(s.state, hass)} g` : t.noSpool;
-      return `<button class="slot" data-id="${esc(id)}" title="${esc([a.spool_name, a.brand].filter(Boolean).join(" · ") || a.material || "")}">
+      return `<button class="slot${a.in_use ? " on" : ""}" data-id="${esc(id)}" title="${esc([a.spool_name, a.brand].filter(Boolean).join(" · ") || a.material || "")}">
         ${spoolSvg(col, pct, 34)}
-        <span class="sl">${esc(a.slot ?? "")}</span>
+        <span class="sl">${esc(a.slot ?? "")}${a.in_use ? ` · <b>${esc(t.printing)}</b>` : ""}</span>
         <span class="mat">${esc(a.material || "–")}</span>
         <span class="g">${esc(grams)}</span>
         ${pct !== null ? `<span class="fill${pct <= 15 ? " low" : ""}"><i style="width:${pct}%"></i></span>` : ""}
@@ -387,6 +387,8 @@ const PRINTER_CSS = `
   .slot { display: grid; justify-items: center; gap: 2px; padding: 10px 6px 8px; border-radius: 12px; cursor: pointer; text-align: center;
           border: 1px solid var(--divider-color, rgba(127,127,127,.25)); background: none; color: var(--primary-text-color); min-width: 0; }
   .slot .spool { margin-bottom: 4px; }
+  .slot.on { border: 2px solid var(--primary-color, #03a9f4); padding: 9px 5px 7px; }
+  .slot.on .sl b { color: var(--primary-color, #03a9f4); font-weight: 600; }
   .sl { font-size: 11px; color: var(--secondary-text-color); }
   .mat { font-size: 13px; font-weight: 600; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .g { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; }

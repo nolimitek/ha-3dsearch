@@ -175,6 +175,7 @@ class SlotSensor(PrinterEntity, SensorEntity):
             "index": slot.get("index"),
             "material": slot.get("material"),
             "color": slot.get("color"),
+            "in_use": bool(slot.get("in_use")),
             "spool_id": spool.get("id"),
             "spool_name": spool.get("name"),
             "brand": spool.get("brand"),
