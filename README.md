@@ -3,6 +3,8 @@
 Brings your printers and filament stock from [3dsearch.net](https://3dsearch.net/filament/) into Home Assistant:
 **Anycubic Cloud, Bambu Lab, Creality Cloud, Elegoo and Klipper** in one integration, together with the spools you manage on 3dsearch.net.
 
+![Dashboard with the 3DSEARCH printer card and filament stock card](https://raw.githubusercontent.com/nolimitek/ha-3dsearch/main/docs/images/dashboard.png)
+
 [![Open your Home Assistant instance and open this repository in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=nolimitek&repository=ha-3dsearch&category=integration)
 
 ## What you get
@@ -30,12 +32,16 @@ The print event is based on the job history of 3dsearch.net, so a print that end
 
 The integration brings two cards along — no extra download, they appear in the card picker after the restart:
 
+<img src="https://raw.githubusercontent.com/nolimitek/ha-3dsearch/main/docs/images/printer-card.png" alt="3DSEARCH printer card" width="420">
+
 ```yaml
 type: custom:threedsearch-printer-card
 device: <printer device>   # pick it in the visual editor
 ```
 
 State, progress ring with remaining time and end, temperatures, the filament slots **in their real colours** with remaining grams, pause/resume/cancel (cancel needs a second tap), and one block per ACE/AMS with temperature, humidity and drying — start drying with presets (PLA 45 °C/4 h, TPU 50 °C/6 h, PETG 55 °C/6 h, ABS/ASA 55 °C/8 h) or your own values.
+
+<img src="https://raw.githubusercontent.com/nolimitek/ha-3dsearch/main/docs/images/stock-card.png" alt="3DSEARCH filament stock card" width="420">
 
 ```yaml
 type: custom:threedsearch-stock-card
