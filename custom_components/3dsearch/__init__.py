@@ -87,6 +87,19 @@ async def async_unload_entry(hass: HomeAssistant, entry: ThreeDSearchConfigEntry
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, entry: ThreeDSearchConfigEntry, device: dr.DeviceEntry
+) -> bool:
+    """Let the user delete a printer that 3dsearch.net no longer reports; the account and current printers stay."""
+    coordinator = entry.runtime_data
+    current = {(DOMAIN, f"account_{coordinator.account_id}")}
+    current.update(
+        (DOMAIN, f"{p.get('provider', 'printer')}_{printer_id}")
+        for printer_id, p in ((coordinator.data or {}).get("printers") or {}).items()
+    )
+    return not device.identifiers & current
+
+
 async def _async_options_updated(hass: HomeAssistant, entry: ThreeDSearchConfigEntry) -> None:
     """Apply a new polling interval."""
     await hass.config_entries.async_reload(entry.entry_id)

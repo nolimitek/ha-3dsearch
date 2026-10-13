@@ -1,4 +1,4 @@
-"""Setup, entities, print events, buttons, revoked keys and printers added later."""
+"""Setup, entities, print events, buttons, revoked keys, printers added later and deleting gone printers."""
 
 from __future__ import annotations
 
@@ -250,3 +250,33 @@ async def test_card_resource_registered_once_and_updated(hass) -> None:
     await mod._async_register_resource(hass, mod.CARD_URL + "?v=0.4.3")
     items = [r for r in res.async_items() if r["url"].startswith(mod.CARD_URL)]
     assert [r["url"] for r in items] == [mod.CARD_URL + "?v=0.4.3"]
+
+
+async def test_remove_gone_printer(hass: HomeAssistant, aioclient_mock, payload, hass_ws_client) -> None:
+    """The UI's "Delete" works for printers 3dsearch.net no longer reports, never for current ones or the account."""
+    from homeassistant.helpers import device_registry as dr
+    from homeassistant.setup import async_setup_component
+
+    assert await async_setup_component(hass, "config", {})
+    entry = await _setup(hass, aioclient_mock, payload)
+    reg = dr.async_get(hass)
+    get = getattr(reg, "async_get_device_by_identifier", None)
+
+    def device(ident: str):
+        return get((DOMAIN, ident), entry.entry_id) if get else reg.async_get_device(identifiers={(DOMAIN, ident)})
+
+    client = await hass_ws_client(hass)
+
+    async def remove(dev) -> dict:
+        await client.send_json_auto_id({"type": "config/device_registry/remove_config_entry",
+                                        "config_entry_id": entry.entry_id, "device_id": dev.id})
+        return await client.receive_json()
+
+    assert not (await remove(device("moonraker_a3c12bb1ca4ea642")))["success"]
+    assert not (await remove(device("account_1")))["success"]
+
+    payload["printers"] = payload["printers"][:1]   # the Bambu printer is gone on 3dsearch.net
+    await _refresh(hass, entry, aioclient_mock, payload)
+    assert (await remove(device("bambu_01P00A123")))["success"]
+    assert device("bambu_01P00A123") is None
+    assert device("moonraker_a3c12bb1ca4ea642") is not None

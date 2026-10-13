@@ -75,11 +75,12 @@ actions:
 ## Notes
 
 - Home Assistant polls every 60 seconds (adjustable in the integration options, 30–600 s). Printer clouds are synced by 3dsearch.net at most once a minute, so this is not a real-time integration.
+- A printer you remove on 3dsearch.net stays in Home Assistant with unavailable entities. Delete it on its device page (⋮ → Delete); current printers and the 3DSEARCH account device can't be deleted.
 - Printers & Filament is in beta on 3dsearch.net.
 
 ## Deutsch
 
-Drucker und Filamentlager von [3dsearch.net](https://3dsearch.net/filament/) in Home Assistant. Installation über HACS (benutzerdefiniertes Repository, Typ Integration), danach auf 3dsearch.net unter **Drucker & Filament → Einstellungen → Home Assistant** einen Schlüssel erstellen und in Home Assistant bei **Integration hinzufügen → 3DSEARCH** einfügen. Die Integration ist auf Deutsch, Englisch, Französisch, Spanisch, Italienisch und Niederländisch übersetzt.
+Drucker und Filamentlager von [3dsearch.net](https://3dsearch.net/filament/) in Home Assistant. Installation über HACS (benutzerdefiniertes Repository, Typ Integration), danach auf 3dsearch.net unter **Drucker & Filament → Einstellungen → Home Assistant** einen Schlüssel erstellen und in Home Assistant bei **Integration hinzufügen → 3DSEARCH** einfügen. Die Integration ist auf Deutsch, Englisch, Französisch, Spanisch, Italienisch und Niederländisch übersetzt. Drucker, die es auf 3dsearch.net nicht mehr gibt, lassen sich auf ihrer Geräteseite löschen (⋮ → Löschen).
 
 ## License
 
