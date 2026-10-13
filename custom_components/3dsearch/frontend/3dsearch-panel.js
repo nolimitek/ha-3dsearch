@@ -58,17 +58,19 @@
       const root = this.shadowRoot || this.attachShadow({ mode: 'open' });
       root.innerHTML = `
         <style>
-          :host { display: flex; flex-direction: column; height: 100%; background: var(--primary-background-color); }
-          .bar { display: flex; align-items: center; gap: 4px; flex: none; box-sizing: border-box;
-                 height: var(--header-height, 56px); padding: 0 12px 0 4px;
-                 padding-top: env(safe-area-inset-top, 0px); height: calc(var(--header-height, 56px) + env(safe-area-inset-top, 0px));
+          /* Full window height on its own: Home Assistant gives custom panels no fixed height, so 100 % of the
+             parent collapsed to zero and the frame was invisible (0.5.0b1/b2) */
+          :host { display: block; position: relative; height: 100vh; height: 100dvh; overflow: hidden;
+                  background: var(--primary-background-color); }
+          .bar { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 4px; box-sizing: border-box;
+                 height: calc(var(--header-height, 56px) + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) 12px 0 4px;
                  background: var(--app-header-background-color, var(--primary-color)); color: var(--app-header-text-color, #fff);
                  border-bottom: var(--app-header-border-bottom, none); }
           .title { font-size: 20px; font-weight: 400; margin-left: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-          .wrap { position: relative; flex: 1; min-height: 0; }
+          .wrap { position: absolute; left: 0; right: 0; bottom: 0; top: calc(var(--header-height, 56px) + env(safe-area-inset-top, 0px)); }
           iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: var(--primary-background-color); }
           .msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px;
-                 text-align: center; color: var(--secondary-text-color); font-size: 15px; }
+                 text-align: center; color: var(--secondary-text-color); font-size: 15px; background: var(--primary-background-color); }
           .msg[hidden] { display: none; }
           .msg a { color: var(--primary-color); }
         </style>
