@@ -6,10 +6,19 @@
  *
  * The frame sends this Home Assistant's origin as referer (referrerpolicy="origin"): Home Assistant itself sends none,
  * and 3dsearch.net's Cloudflare puts a challenge in front of requests without one — which may not show in a frame.
+ *
+ * Theme: the panel reads the active Home Assistant theme (colors, card radius, font) from its own computed style and
+ * hands it to the workshop — in the fragment when loading (no flash of the 3DSEARCH colors) and by postMessage when
+ * the theme or dark mode changes. The workshop maps it onto its own colors; anything a theme leaves out keeps the default.
  */
 (() => {
   const ORIGIN = 'https://3dsearch.net';
   const READY_TIMEOUT = 20000;
+  const THEME_VARS = ['primary-background-color', 'secondary-background-color', 'card-background-color', 'ha-card-background',
+    'primary-text-color', 'secondary-text-color', 'disabled-text-color', 'divider-color', 'primary-color', 'text-primary-color',
+    'success-color', 'warning-color', 'error-color', 'ha-card-border-radius', 'ha-border-radius-md', 'ha-card-box-shadow',
+    'ha-font-family-body'];
+  const b64url = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const TXT = {
     de: ['Die Werkstatt lädt nicht.', 'In neuem Fenster öffnen'],
     en: ['The workshop does not load.', 'Open in a new window'],
@@ -28,9 +37,24 @@
 
     set hass(hass) {
       const first = !this._hass;
+      const themeChanged = !first && (hass.themes !== this._hass.themes || hass.selectedTheme !== this._hass.selectedTheme);
       this._hass = hass;
       if (this._menu) { this._menu.hass = hass; }
       if (first) this._render();
+      // Home Assistant applies a new theme to the page right after updating hass → read it a frame later
+      else if (themeChanged) requestAnimationFrame(() => this._sendTheme());
+    }
+
+    /** Active theme as {d: dark, v: {variable: value}} from this element's computed style (inherits the theme). */
+    _theme() {
+      const cs = getComputedStyle(this), v = {};
+      for (const k of THEME_VARS) { const x = cs.getPropertyValue('--' + k).trim(); if (x && x.length <= 200) v[k] = x; }
+      return { d: !!(this._hass.themes && this._hass.themes.darkMode), v };
+    }
+
+    _sendTheme() {
+      if (!this._frame || !this._frame.contentWindow || !this._frame.getAttribute('src')) return;
+      this._frame.contentWindow.postMessage({ type: '3dsearch-theme', theme: this._theme() }, ORIGIN);
     }
 
     set narrow(narrow) {
@@ -96,7 +120,8 @@
         const lang = String((this._hass.locale && this._hass.locale.language) || this._hass.language || 'en').slice(0, 2);
         const theme = this._hass.themes && this._hass.themes.darkMode ? 'dark' : 'light';
         const v = /^[a-z0-9_]+$/.test(view || '') ? '&v=' + view : '';
-        this._frame.src = `${r.url}?lang=${encodeURIComponent(lang)}&theme=${theme}#tok=${r.token}${v}`;
+        const th = '&th=' + b64url(JSON.stringify(this._theme()));
+        this._frame.src = `${r.url}?lang=${encodeURIComponent(lang)}&theme=${theme}#tok=${r.token}${v}${th}`;
         this._msg.hidden = true;
         // The workshop reports "3dsearch-embed-ready" once it runs; without it the frame stays empty (blocked) → say so
         clearTimeout(this._readyTimer);
@@ -117,7 +142,7 @@
       // Only our own frame, only from 3dsearch.net
       if (!this._frame || e.source !== this._frame.contentWindow || e.origin !== ORIGIN) return;
       const d = e.data || {};
-      if (d.type === '3dsearch-embed-ready') { clearTimeout(this._readyTimer); this._msg.hidden = true; return; }
+      if (d.type === '3dsearch-embed-ready') { clearTimeout(this._readyTimer); this._msg.hidden = true; this._sendTheme(); return; }
       if (d.type !== '3dsearch-embed-expired') return;
       // At most one new sign-in per minute: several requests of the old page can report the expiry at once, and a
       // sign-in that 3dsearch.net keeps refusing must not reload the frame in a loop
