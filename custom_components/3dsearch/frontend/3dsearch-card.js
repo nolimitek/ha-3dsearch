@@ -10,7 +10,7 @@
  */
 (() => {
 "use strict";
-const VERSION = "0.4.5";
+const VERSION = "0.4.6";
 const DOMAIN = "3dsearch";
 
 const I18N = {
@@ -559,10 +559,17 @@ class ThreeDSearchPrinterCardEditor extends HTMLElement {
   }
 }
 
-for (const [tag, cls] of [["threedsearch-printer-card", ThreeDSearchPrinterCard], ["threedsearch-stock-card", ThreeDSearchStockCard],
-                          ["threedsearch-printer-card-editor", ThreeDSearchPrinterCardEditor]]) {
-  if (!customElements.get(tag)) customElements.define(tag, cls);
-}
+// Home Assistant's app first swaps window.customElements for a scoped-registry polyfill, then defines <home-assistant>.
+// This file also comes in as an extra module that races the app: defined before the swap, the cards are invisible to
+// Home Assistant ("Custom element doesn't exist", now and then, after any reload). So wait for <home-assistant>.
+const define = () => {
+  for (const [tag, cls] of [["threedsearch-printer-card", ThreeDSearchPrinterCard], ["threedsearch-stock-card", ThreeDSearchStockCard],
+                            ["threedsearch-printer-card-editor", ThreeDSearchPrinterCardEditor]]) {
+    if (!window.customElements.get(tag)) window.customElements.define(tag, cls);
+  }
+};
+if (window.customElements.get("home-assistant") || !document.querySelector("home-assistant")) define();
+else window.customElements.whenDefined("home-assistant").then(define);
 window.customCards = window.customCards || [];
 for (const c of [
   { type: "threedsearch-printer-card", name: "3DSEARCH printer", description: "Printer state, progress, temperatures and filament slots in their real colours.", preview: true, documentationURL: "https://github.com/nolimitek/ha-3dsearch" },
