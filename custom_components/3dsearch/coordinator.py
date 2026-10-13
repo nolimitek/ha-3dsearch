@@ -51,6 +51,7 @@ class ThreeDSearchCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "printers": printers,
             "spools": spools,
             "spool_items": items,
+            "features": data.get("features") or {},
             "time": data.get("time"),
         }
 
@@ -58,6 +59,11 @@ class ThreeDSearchCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def account_id(self) -> str:
         """Stable id of the 3DSEARCH account (also the config entry unique id)."""
         return str((self.data or {}).get("account", {}).get("id", self.config_entry.unique_id))
+
+    @property
+    def panel_enabled(self) -> bool:
+        """3dsearch.net unlocked the sidebar panel (embedded workshop) for this account."""
+        return bool((self.data or {}).get("features", {}).get("panel"))
 
     def printer(self, printer_id: str) -> dict[str, Any] | None:
         """Latest data of one printer, None if it is gone."""

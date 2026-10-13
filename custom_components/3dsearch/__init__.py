@@ -16,6 +16,7 @@ from .api import ThreeDSearchApi
 from .const import CONF_API_KEY, DOMAIN
 from .coordinator import ThreeDSearchConfigEntry, ThreeDSearchCoordinator
 from .entity import account_device
+from .panel import PANEL_FILE, PANEL_JS_URL, async_register_websocket, async_remove_panel, async_setup_panel
 
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [
@@ -28,13 +29,15 @@ CARD_FILE = Path(__file__).parent / "frontend" / "3dsearch-card.js"
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Serve the dashboard cards (custom:3dsearch-printer-card, custom:3dsearch-stock-card) and load them in every dashboard."""
+    async_register_websocket(hass)
     if "frontend" not in hass.config.components or getattr(hass, "http", None) is None:
         return True   # e.g. tests without a frontend
     from homeassistant.components.frontend import add_extra_js_url  # noqa: PLC0415
     from homeassistant.components.http import StaticPathConfig  # noqa: PLC0415
 
     manifest = json.loads(await hass.async_add_executor_job((Path(__file__).parent / "manifest.json").read_text))
-    await hass.http.async_register_static_paths([StaticPathConfig(CARD_URL, str(CARD_FILE), False)])
+    await hass.http.async_register_static_paths([StaticPathConfig(CARD_URL, str(CARD_FILE), False),
+                                                 StaticPathConfig(PANEL_JS_URL, str(PANEL_FILE), False)])
     # The version in the URL makes browsers load the new card after an update
     url = f"{CARD_URL}?v={manifest.get('version', '0')}"
     add_extra_js_url(hass, url)
@@ -79,11 +82,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ThreeDSearchConfigEntry)
     ).id
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
+    # Sidebar "3D printing" (embedded workshop) only where 3dsearch.net unlocked it for the account
+    if coordinator.panel_enabled:
+        manifest = json.loads(await hass.async_add_executor_job((Path(__file__).parent / "manifest.json").read_text))
+        try:
+            await async_setup_panel(hass, entry.entry_id, manifest.get("version", "0"))
+        except Exception:  # noqa: BLE001 — the panel must never block the integration
+            _LOGGER.warning("Could not add the 3DSEARCH sidebar panel", exc_info=True)
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ThreeDSearchConfigEntry) -> bool:
     """Unload a config entry."""
+    async_remove_panel(hass, entry.entry_id)
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 

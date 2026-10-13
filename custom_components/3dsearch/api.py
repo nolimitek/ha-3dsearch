@@ -60,3 +60,7 @@ class ThreeDSearchApi:
     async def command(self, printer_id: str, cmd: str, **params: Any) -> None:
         """Pause/resume/stop a print or start/stop drying (Anycubic Cloud and Klipper agent printers only)."""
         await self._request("POST", {"printer": printer_id, "cmd": cmd, **params})
+
+    async def embed_token(self) -> dict[str, Any]:
+        """Short-lived sign-in for the embedded workshop (sidebar panel): token, url, expires_in."""
+        return await self._request("POST", {"cmd": "embed_token"})
