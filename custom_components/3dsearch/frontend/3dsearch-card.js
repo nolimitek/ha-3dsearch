@@ -10,7 +10,7 @@
  */
 (() => {
 "use strict";
-const VERSION = "0.5.0b7";
+const VERSION = "0.5.0b8";
 const DOMAIN = "3dsearch";
 
 const I18N = {
@@ -293,20 +293,22 @@ class ThreeDSearchPrinterCard extends HTMLElement {
     return Object.entries(boxes).sort(([a], [b]) => a - b).map(([bid, b]) => {
       const st = (k) => (b[k] ? hass.states[b[k]] : undefined);
       const sw = st("drying"), rem = st("dry_remaining"), tmp = st("temperature"), hum = st("humidity");
-      const ctl = !!sw && sw.state !== "unavailable";
+      // Switch unavailable = printer offline → button greyed out like pause/resume/cancel (not hidden)
+      const ctl = !!sw && sw.state !== "unavailable", locked = !!sw && !ctl;
       const drying = ctl ? sw.state === "on" : !!rem?.attributes.drying;
       const target = (ctl ? sw.attributes.target_temperature : rem?.attributes.target_temperature) || null;
       const left = (ctl ? sw.attributes.remaining_minutes : usable(rem) ? +rem.state : null) || null;
       const chips = [usable(tmp) ? `<span class="mini" data-eid="${esc(b.temperature)}">${svg(ICONS.heat, 14)}${esc(fmtNum(tmp.state, hass))} °C</span>` : "",
                      usable(hum) ? `<span class="mini" data-eid="${esc(b.humidity)}">${svg(ICONS.drop, 14)}${esc(fmtNum(hum.state, hass))} %</span>` : ""].join("");
-      if (!ctl && !drying && !chips) return "";
+      if (!ctl && !locked && !drying && !chips) return "";
       const open = this._dryOpen === bid && ctl && !drying;
       const v = this._dryVals?.[bid] || { temp: +(st("dry_temperature")?.state) || 45, hours: +(st("dry_duration")?.state) || 4 };
       const presets = [["PLA", 45, 4], ["TPU", 50, 6], ["PETG", 55, 6], ["ABS/ASA", 55, 8]];
       return `<div class="sec box" data-box="${esc(bid)}">
         <div class="bxh"><b>${esc(b.label || "Box")}</b>${chips}<span class="grow"></span>
           ${ctl ? (drying ? `<button class="act sm danger" data-dry="stop">${svg(ICONS.stop, 14)}<span>${esc(t.dryStop)}</span></button>`
-                          : `<button class="act sm" data-dry="${open ? "close" : "open"}">${svg(ICONS.heat, 14)}<span>${esc(open ? t.dryCancel : t.dry)}</span></button>`) : ""}</div>
+                          : `<button class="act sm" data-dry="${open ? "close" : "open"}">${svg(ICONS.heat, 14)}<span>${esc(open ? t.dryCancel : t.dry)}</span></button>`)
+                : locked ? `<button class="act sm" disabled>${svg(ICONS.heat, 14)}<span>${esc(t.dry)}</span></button>` : ""}</div>
         ${drying ? `<div class="dryon" data-eid="${esc(b.drying || b.dry_remaining)}">${svg(ICONS.heat, 16)}<span><b>${esc(t.drying)}</b>${target ? ` · ${esc(target)} °C` : ""}${left ? ` · ${esc(t.left.replace("{t}", fmtMinutes(left)))}` : ""}</span></div>` : ""}
         ${open ? `<div class="drypanel">
             <div class="presets">${presets.map(([m, tc, hh]) => `<button data-pre="${tc},${hh}" class="${v.temp === tc && v.hours === hh ? "on" : ""}"><b>${m}</b><span>${tc} °C · ${hh} h</span></button>`).join("")}</div>

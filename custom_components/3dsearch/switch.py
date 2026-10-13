@@ -40,6 +40,11 @@ class DryingSwitch(BoxEntity, SwitchEntity):
         self._optimistic: tuple[bool, float] | None = None
 
     @property
+    def available(self) -> bool:
+        # An offline printer cannot take the command — show the switch greyed out like pause/resume/cancel
+        return super().available and bool(self.printer.get("online"))
+
+    @property
     def is_on(self) -> bool:
         real = bool(self.box.get("drying"))
         if self._optimistic:
