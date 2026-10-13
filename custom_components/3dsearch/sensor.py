@@ -1,4 +1,4 @@
-"""Sensors: printer state, job progress, temperatures, slots and the spool stock."""
+"""Sensors: printer state, job progress, temperatures, slots, counters, maintenance, the spool stock and usage."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.const import PERCENTAGE, UnitOfMass, UnitOfTemperature, UnitOfTime
+from homeassistant.const import PERCENTAGE, UnitOfLength, UnitOfMass, UnitOfTemperature, UnitOfTime
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.util import dt as dt_util
@@ -85,17 +85,51 @@ PRINTER_SENSORS: tuple[PrinterSensorDescription, ...] = (
 )
 
 
+# Lifetime counters the printer reports itself (Anycubic, Klipper) — the numbers on top of the printer card on 3dsearch.net.
+# total_increasing: a printer whose history is cleared starts again at 0, which Home Assistant's statistics handle as a reset.
+COUNTER_SENSORS: tuple[PrinterSensorDescription, ...] = (
+    PrinterSensorDescription(
+        key="total_prints",
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        value=lambda p: (p.get("counters") or {}).get("prints"),
+    ),
+    PrinterSensorDescription(
+        key="total_print_time",
+        device_class=SensorDeviceClass.DURATION,
+        native_unit_of_measurement=UnitOfTime.HOURS,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        value=lambda p: (p.get("counters") or {}).get("hours"),
+    ),
+    PrinterSensorDescription(
+        key="total_filament",
+        device_class=SensorDeviceClass.DISTANCE,
+        native_unit_of_measurement=UnitOfLength.METERS,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        value=lambda p: (p.get("counters") or {}).get("filament_m"),
+    ),
+)
+COUNTER_FIELDS = {"total_prints": "prints", "total_print_time": "hours", "total_filament": "filament_m"}
+
+
 async def async_setup_entry(
     hass: HomeAssistant, entry: ThreeDSearchConfigEntry, async_add_entities: AddConfigEntryEntitiesCallback
 ) -> None:
     """Set up sensors."""
     coordinator = entry.runtime_data
-    async_add_entities([SpoolCountSensor(coordinator), StockSensor(coordinator), LowSpoolsSensor(coordinator)])
+    async_add_entities([SpoolCountSensor(coordinator), StockSensor(coordinator), LowSpoolsSensor(coordinator),
+                        FilamentPrintedSensor(coordinator), MonthCostSensor(coordinator), SpoolsToDrySensor(coordinator)])
 
     def factory(printer_id: str, printer: dict[str, Any]) -> dict[str, SensorEntity]:
         out: dict[str, SensorEntity] = {
             f"{printer_id}_{d.key}": PrinterSensor(coordinator, printer_id, d) for d in PRINTER_SENSORS
         }
+        # Counters and maintenance only where there is something: printers that report counters / have a maintenance plan
+        counters = printer.get("counters") or {}
+        for d in COUNTER_SENSORS:
+            if counters.get(COUNTER_FIELDS[d.key]) is not None:
+                out[f"{printer_id}_{d.key}"] = PrinterSensor(coordinator, printer_id, d)
+        if printer.get("maint"):
+            out[f"{printer_id}_maintenance"] = MaintenanceSensor(coordinator, printer_id)
         for slot in printer.get("slots") or []:
             out[f"{printer_id}_slot_{slot['index']}"] = SlotSensor(coordinator, printer_id, slot)
         for box in printer.get("boxes") or []:
@@ -133,6 +167,35 @@ class PrinterSensor(PrinterEntity, SensorEntity):
         if key == "current_layer":
             return {"total_layers": self.job.get("layers")}
         return None
+
+
+class MaintenanceSensor(PrinterEntity, SensorEntity):
+    """Maintenance plan of a printer: how far the next task is (100 % = due), the task and what is left as attributes."""
+
+    _attr_native_unit_of_measurement = PERCENTAGE
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def __init__(self, coordinator: ThreeDSearchCoordinator, printer_id: str) -> None:
+        super().__init__(coordinator, printer_id, "maintenance")
+
+    @property
+    def maint(self) -> dict[str, Any]:
+        return self.printer.get("maint") or {}
+
+    @property
+    def native_value(self) -> int | None:
+        return (self.maint.get("next") or {}).get("pct")
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        nxt = self.maint.get("next") or {}
+        return {
+            "task": nxt.get("title"),
+            "state": nxt.get("state"),
+            "remaining": nxt.get("remaining"),
+            "unit": nxt.get("unit"),
+            "tasks": self.maint.get("tasks") or [],
+        }
 
 
 class SlotSensor(PrinterEntity, SensorEntity):
@@ -240,6 +303,91 @@ class LowSpoolsSensor(ThreeDSearchEntity, SensorEntity):
         }
 
 
+class FilamentPrintedSensor(ThreeDSearchEntity, SensorEntity):
+    """All filament that 3dsearch.net booked for finished and cancelled prints — for long-term statistics.
+
+    state_class total, not total_increasing: a corrected booking on 3dsearch.net can lower the sum a little, and
+    Home Assistant would read any drop of a total_increasing sensor as a meter reset.
+    """
+
+    _attr_device_class = SensorDeviceClass.WEIGHT
+    _attr_native_unit_of_measurement = UnitOfMass.GRAMS
+    _attr_suggested_unit_of_measurement = UnitOfMass.KILOGRAMS
+    _attr_suggested_display_precision = 2
+    _attr_state_class = SensorStateClass.TOTAL
+
+    def __init__(self, coordinator: ThreeDSearchCoordinator) -> None:
+        super().__init__(coordinator, "filament_printed")
+
+    @property
+    def usage(self) -> dict[str, Any]:
+        return (self.coordinator.data or {}).get("usage") or {}
+
+    @property
+    def native_value(self) -> int | None:
+        return self.usage.get("filament_g")
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {"prints": self.usage.get("prints")}
+
+
+class MonthCostSensor(ThreeDSearchEntity, SensorEntity):
+    """Print costs of the current calendar month: filament plus electricity and wear (when set on 3dsearch.net)."""
+
+    _attr_device_class = SensorDeviceClass.MONETARY
+    _attr_suggested_display_precision = 2
+    _attr_state_class = SensorStateClass.TOTAL
+
+    def __init__(self, coordinator: ThreeDSearchCoordinator) -> None:
+        super().__init__(coordinator, "month_cost")
+
+    @property
+    def month(self) -> dict[str, Any]:
+        return ((self.coordinator.data or {}).get("usage") or {}).get("month") or {}
+
+    @property
+    def native_unit_of_measurement(self) -> str:
+        return self.month.get("currency") or "EUR"
+
+    @property
+    def native_value(self) -> float | None:
+        return self.month.get("cost")
+
+    @property
+    def last_reset(self) -> datetime | None:
+        return _ts(self.month.get("start"))
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        m = self.month
+        return {"filament": m.get("material"), "operating": m.get("run"), "prints": m.get("prints"), "grams": m.get("grams")}
+
+
+class SpoolsToDrySensor(ThreeDSearchEntity, SensorEntity):
+    """Open spools that should be dried (days since opening/drying, limit by material — as in the spool list)."""
+
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def __init__(self, coordinator: ThreeDSearchCoordinator) -> None:
+        super().__init__(coordinator, "spools_to_dry")
+
+    @property
+    def native_value(self) -> int | None:
+        due = (self.coordinator.data or {}).get("spools", {}).get("dry_due")
+        return len(due) if isinstance(due, list) else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {
+            "spools": [
+                {"name": s.get("name"), "brand": s.get("brand"), "material": s.get("material"),
+                 "days": s.get("days"), "limit_days": s.get("limit")}
+                for s in (self.coordinator.data or {}).get("spools", {}).get("dry_due") or []
+            ],
+        }
+
+
 class SpoolSensor(ThreeDSearchEntity, SensorEntity):
     """One spool of the stock on 3dsearch.net: remaining grams; brand, material, colour, location as attributes."""
 
@@ -282,6 +430,8 @@ class SpoolSensor(ThreeDSearchEntity, SensorEntity):
             "location": s.get("location"),
             "printer": loaded.get("printer"),
             "slot": loaded.get("slot"),
+            "dry_due": bool((s.get("dry") or {}).get("due")),
+            "days_open": (s.get("dry") or {}).get("days"),
         }
 
 

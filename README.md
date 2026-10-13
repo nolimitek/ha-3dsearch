@@ -23,8 +23,10 @@ Per printer (one device each):
 | `switch` ACE *n* drying | start/stop drying (ACE via Anycubic Cloud or Klipper with Rinkhals) using the two settings below |
 | `number` ACE *n* drying temperature / duration | 35–55 °C, 1–24 h — kept in Home Assistant |
 | `sensor` Box temperature / humidity / drying time remaining | ACE, AMS (Bambu AMS drying is shown, not controllable) |
+| `sensor` Total prints / print time / filament | the printer's own lifetime counters, for printers that report them (Anycubic, Klipper) |
+| `sensor` Next maintenance, `binary_sensor` Maintenance due | for printers with a maintenance plan on 3dsearch.net: how far the next task is (100 % = due), task and what is left as attributes |
 
-For the account: **Spools in stock**, **Filament in stock**, **Spools almost empty** (with the list of spools), and **one sensor per spool** (remaining grams; brand, material, colour, storage location and — when loaded — printer and slot as attributes). Spools added on 3dsearch.net appear automatically; archived ones become unavailable.
+For the account: **Spools in stock**, **Filament in stock**, **Spools almost empty** (with the list of spools), **Spools to dry** (open spools past the drying interval of their material), **Filament printed** (all-time, for long-term statistics), **Print costs this month** (filament, plus electricity and wear when set on 3dsearch.net), and **one sensor per spool** (remaining grams; brand, material, colour, storage location and — when loaded — printer and slot as attributes). Spools added on 3dsearch.net appear automatically; archived ones become unavailable.
 
 The print event is based on the job history of 3dsearch.net, so a print that ends while Home Assistant restarts is still reported.
 

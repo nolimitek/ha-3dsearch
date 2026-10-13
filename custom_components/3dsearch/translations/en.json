@@ -159,6 +159,12 @@
           },
           "slot": {
             "name": "Slot"
+          },
+          "dry_due": {
+            "name": "Should be dried"
+          },
+          "days_open": {
+            "name": "Days since opened or dried"
           }
         }
       },
@@ -223,6 +229,68 @@
             "name": "Spools"
           }
         }
+      },
+      "total_prints": {
+        "name": "Total prints"
+      },
+      "total_print_time": {
+        "name": "Total print time"
+      },
+      "total_filament": {
+        "name": "Total filament"
+      },
+      "maintenance": {
+        "name": "Next maintenance",
+        "state_attributes": {
+          "task": {
+            "name": "Task"
+          },
+          "state": {
+            "name": "State"
+          },
+          "remaining": {
+            "name": "Remaining"
+          },
+          "unit": {
+            "name": "Unit"
+          },
+          "tasks": {
+            "name": "Tasks"
+          }
+        }
+      },
+      "filament_printed": {
+        "name": "Filament printed",
+        "state_attributes": {
+          "prints": {
+            "name": "Prints"
+          }
+        }
+      },
+      "month_cost": {
+        "name": "Print costs this month",
+        "state_attributes": {
+          "filament": {
+            "name": "Filament"
+          },
+          "operating": {
+            "name": "Electricity and wear"
+          },
+          "prints": {
+            "name": "Prints"
+          },
+          "grams": {
+            "name": "Filament (g)"
+          }
+        }
+      },
+      "spools_to_dry": {
+        "name": "Spools to dry",
+        "state_attributes": {
+          "spools": {
+            "name": "Spools"
+          }
+        }
       }
     },
     "binary_sensor": {
@@ -237,6 +305,14 @@
         "state_attributes": {
           "error": {
             "name": "Error"
+          }
+        }
+      },
+      "maintenance_due": {
+        "name": "Maintenance due",
+        "state_attributes": {
+          "tasks": {
+            "name": "Tasks due"
           }
         }
       }

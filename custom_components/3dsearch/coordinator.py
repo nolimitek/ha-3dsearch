@@ -52,6 +52,7 @@ class ThreeDSearchCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "spools": spools,
             "spool_items": items,
             "features": data.get("features") or {},
+            "usage": data.get("usage") or {},
             "time": data.get("time"),
         }
 

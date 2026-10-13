@@ -159,6 +159,12 @@
           },
           "slot": {
             "name": "Slot"
+          },
+          "dry_due": {
+            "name": "Da asciugare"
+          },
+          "days_open": {
+            "name": "Giorni dall’apertura o dall’asciugatura"
           }
         }
       },
@@ -223,6 +229,68 @@
             "name": "Bobine"
           }
         }
+      },
+      "total_prints": {
+        "name": "Stampe totali"
+      },
+      "total_print_time": {
+        "name": "Tempo di stampa totale"
+      },
+      "total_filament": {
+        "name": "Filamento totale"
+      },
+      "maintenance": {
+        "name": "Prossima manutenzione",
+        "state_attributes": {
+          "task": {
+            "name": "Attività"
+          },
+          "state": {
+            "name": "Stato"
+          },
+          "remaining": {
+            "name": "Mancano"
+          },
+          "unit": {
+            "name": "Unità"
+          },
+          "tasks": {
+            "name": "Attività"
+          }
+        }
+      },
+      "filament_printed": {
+        "name": "Filamento stampato",
+        "state_attributes": {
+          "prints": {
+            "name": "Stampe"
+          }
+        }
+      },
+      "month_cost": {
+        "name": "Costi di stampa questo mese",
+        "state_attributes": {
+          "filament": {
+            "name": "Filamento"
+          },
+          "operating": {
+            "name": "Elettricità e usura"
+          },
+          "prints": {
+            "name": "Stampe"
+          },
+          "grams": {
+            "name": "Filamento (g)"
+          }
+        }
+      },
+      "spools_to_dry": {
+        "name": "Bobine da asciugare",
+        "state_attributes": {
+          "spools": {
+            "name": "Bobine"
+          }
+        }
       }
     },
     "binary_sensor": {
@@ -237,6 +305,14 @@
         "state_attributes": {
           "error": {
             "name": "Errore"
+          }
+        }
+      },
+      "maintenance_due": {
+        "name": "Manutenzione necessaria",
+        "state_attributes": {
+          "tasks": {
+            "name": "Attività da fare"
           }
         }
       }

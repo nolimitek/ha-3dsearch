@@ -159,6 +159,12 @@
           },
           "slot": {
             "name": "Ranura"
+          },
+          "dry_due": {
+            "name": "Debería secarse"
+          },
+          "days_open": {
+            "name": "Días desde que se abrió o secó"
           }
         }
       },
@@ -223,6 +229,68 @@
             "name": "Bobinas"
           }
         }
+      },
+      "total_prints": {
+        "name": "Impresiones totales"
+      },
+      "total_print_time": {
+        "name": "Tiempo de impresión total"
+      },
+      "total_filament": {
+        "name": "Filamento total"
+      },
+      "maintenance": {
+        "name": "Próximo mantenimiento",
+        "state_attributes": {
+          "task": {
+            "name": "Tarea"
+          },
+          "state": {
+            "name": "Estado"
+          },
+          "remaining": {
+            "name": "Restante"
+          },
+          "unit": {
+            "name": "Unidad"
+          },
+          "tasks": {
+            "name": "Tareas"
+          }
+        }
+      },
+      "filament_printed": {
+        "name": "Filamento impreso",
+        "state_attributes": {
+          "prints": {
+            "name": "Impresiones"
+          }
+        }
+      },
+      "month_cost": {
+        "name": "Coste de impresión este mes",
+        "state_attributes": {
+          "filament": {
+            "name": "Filamento"
+          },
+          "operating": {
+            "name": "Electricidad y desgaste"
+          },
+          "prints": {
+            "name": "Impresiones"
+          },
+          "grams": {
+            "name": "Filamento (g)"
+          }
+        }
+      },
+      "spools_to_dry": {
+        "name": "Bobinas por secar",
+        "state_attributes": {
+          "spools": {
+            "name": "Bobinas"
+          }
+        }
       }
     },
     "binary_sensor": {
@@ -237,6 +305,14 @@
         "state_attributes": {
           "error": {
             "name": "Error"
+          }
+        }
+      },
+      "maintenance_due": {
+        "name": "Mantenimiento pendiente",
+        "state_attributes": {
+          "tasks": {
+            "name": "Tareas pendientes"
           }
         }
       }

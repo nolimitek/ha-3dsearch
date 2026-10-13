@@ -1,4 +1,4 @@
-"""Binary sensors: printer online, printing, problem."""
+"""Binary sensors: printer online, printing, problem, maintenance due."""
 
 from __future__ import annotations
 
@@ -25,7 +25,11 @@ async def async_setup_entry(
     coordinator = entry.runtime_data
 
     def factory(printer_id: str, printer: dict[str, Any]) -> dict[str, BinarySensorEntity]:
-        return {f"{printer_id}_{k}": PrinterBinarySensor(coordinator, printer_id, k, dc) for k, dc in BINARY_SENSORS.items()}
+        out = {f"{printer_id}_{k}": PrinterBinarySensor(coordinator, printer_id, k, dc) for k, dc in BINARY_SENSORS.items()}
+        if printer.get("maint"):   # only printers with a maintenance plan on 3dsearch.net
+            out[f"{printer_id}_maintenance_due"] = PrinterBinarySensor(coordinator, printer_id, "maintenance_due",
+                                                                        BinarySensorDeviceClass.PROBLEM)
+        return out
 
     add_printer_entities(entry, coordinator, async_add_entities, factory)
 
@@ -50,8 +54,12 @@ class PrinterBinarySensor(PrinterEntity, BinarySensorEntity):
             return bool(self.printer.get("online"))
         if self.key == "printing":
             return state in ("printing", "paused")
+        if self.key == "maintenance_due":
+            return bool((self.printer.get("maint") or {}).get("due"))
         return state == "error"
 
     @property
     def extra_state_attributes(self) -> dict[str, Any] | None:
+        if self.key == "maintenance_due":
+            return {"tasks": [t.get("title") for t in (self.printer.get("maint") or {}).get("tasks") or [] if t.get("state") == "due"]}
         return {"error": self.printer.get("error")} if self.key == "problem" else None
