@@ -1,4 +1,4 @@
-"""Sidebar panel "3D printing": the 3DSEARCH workshop (printers, spools, slicer, print queue) inside Home Assistant.
+"""Sidebar panel "3DSearch": the 3DSEARCH workshop (printers, spools, slicer, print queue) inside Home Assistant.
 
 The panel shows https://3dsearch.net/filament/embed.php in a frame. It signs in with a short-lived token that the
 integration fetches with the API key (websocket command 3dsearch/embed), so the API key never reaches the browser and
@@ -24,14 +24,8 @@ PANEL_URL_PATH = "3dsearch"
 PANEL_JS_URL = "/3dsearch/3dsearch-panel.js"
 PANEL_FILE = Path(__file__).parent / "frontend" / "3dsearch-panel.js"
 PANEL_ICON = "mdi:printer-3d"
-# The sidebar title is a plain string (no translation keys), so it follows the language Home Assistant runs in
-TITLES = {"de": "3D-Druck", "en": "3D printing", "fr": "Impression 3D", "es": "Impresión 3D", "it": "Stampa 3D", "nl": "3D-printen"}
+PANEL_TITLE = "3DSearch"   # same in every language (the brand), so it never clashes with a user's own "3D printing" dashboard
 DATA_PANEL = f"{DOMAIN}_panel_entry"
-
-
-def panel_title(hass: HomeAssistant) -> str:
-    """Sidebar title in the language of Home Assistant."""
-    return TITLES.get((hass.config.language or "en").split("-")[0], TITLES["en"])
 
 
 async def async_setup_panel(hass: HomeAssistant, entry_id: str, version: str) -> None:
@@ -44,7 +38,7 @@ async def async_setup_panel(hass: HomeAssistant, entry_id: str, version: str) ->
         hass,
         frontend_url_path=PANEL_URL_PATH,
         webcomponent_name="threedsearch-panel",
-        sidebar_title=panel_title(hass),
+        sidebar_title=PANEL_TITLE,
         sidebar_icon=PANEL_ICON,
         module_url=f"{PANEL_JS_URL}?v={version}",
         config={"entry_id": entry_id},

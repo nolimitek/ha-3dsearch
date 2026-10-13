@@ -38,6 +38,7 @@ async def test_panel_only_when_unlocked(hass: HomeAssistant, aioclient_mock, pay
             reg.assert_called_once()
             kw = reg.call_args.kwargs
             assert kw["frontend_url_path"] == "3dsearch" and kw["webcomponent_name"] == "threedsearch-panel"
+            assert kw["sidebar_title"] == "3DSearch"
             assert kw["require_admin"] is True and kw["config"] == {"entry_id": entry.entry_id}
             assert kw["module_url"].startswith("/3dsearch/3dsearch-panel.js?v=")
             assert await hass.config_entries.async_unload(entry.entry_id)
