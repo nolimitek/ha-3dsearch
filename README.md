@@ -23,8 +23,10 @@ Per printer (one device each):
 | `switch` ACE *n* drying | start/stop drying (ACE via Anycubic Cloud or Klipper with Rinkhals) using the two settings below |
 | `number` ACE *n* drying temperature / duration | 35–55 °C, 1–24 h — kept in Home Assistant |
 | `sensor` Box temperature / humidity / drying time remaining | ACE, AMS (Bambu AMS drying is shown, not controllable) |
+| `sensor` Total prints / print time / filament | the printer's own lifetime counters, for printers that report them (Anycubic, Klipper) |
+| `sensor` Next maintenance, `binary_sensor` Maintenance due | for printers with a maintenance plan on 3dsearch.net: how far the next task is (100 % = due), task and what is left as attributes |
 
-For the account: **Spools in stock**, **Filament in stock**, **Spools almost empty** (with the list of spools), and **one sensor per spool** (remaining grams; brand, material, colour, storage location and — when loaded — printer and slot as attributes). Spools added on 3dsearch.net appear automatically; archived ones become unavailable.
+For the account: **Spools in stock**, **Filament in stock**, **Spools almost empty** (with the list of spools), **Spools to dry** (open spools past the drying interval of their material), **Filament printed** (all-time, for long-term statistics), **Print costs this month** (filament, plus electricity and wear when set on 3dsearch.net), and **one sensor per spool** (remaining grams; brand, material, colour, storage location and — when loaded — printer and slot as attributes). Spools added on 3dsearch.net appear automatically; archived ones become unavailable.
 
 The print event is based on the job history of 3dsearch.net, so a print that ends while Home Assistant restarts is still reported.
 
@@ -48,6 +50,14 @@ type: custom:threedsearch-stock-card
 ```
 
 Filament in stock and all your spools with colour, remaining grams and where they are (printer slot or storage location). Almost empty spools come first; with many spools the list folds after 8 rows (`rows: 12` to change).
+
+## Sidebar: the whole workshop inside Home Assistant
+
+Since 0.5.0 the integration adds a **3DSearch** entry to the sidebar. It opens the complete Printers & Filament workshop from 3dsearch.net – printers, spools, slicer and print queue – right inside Home Assistant, in the colours and font of your Home Assistant theme. It works in the browser and in the companion app.
+
+- Only Home Assistant **administrators** see the entry.
+- It signs in with a short-lived token that the integration fetches with your key. The key never reaches the browser and no 3dsearch.net cookie is needed.
+- Printing labels and exporting open a new browser window with the normal 3dsearch.net sign-in.
 
 ## Installation
 
@@ -80,7 +90,7 @@ actions:
 
 ## Deutsch
 
-Drucker und Filamentlager von [3dsearch.net](https://3dsearch.net/filament/) in Home Assistant. Installation über HACS (benutzerdefiniertes Repository, Typ Integration), danach auf 3dsearch.net unter **Drucker & Filament → Einstellungen → Home Assistant** einen Schlüssel erstellen und in Home Assistant bei **Integration hinzufügen → 3DSEARCH** einfügen. Die Integration ist auf Deutsch, Englisch, Französisch, Spanisch, Italienisch und Niederländisch übersetzt. Drucker, die es auf 3dsearch.net nicht mehr gibt, lassen sich auf ihrer Geräteseite löschen (⋮ → Löschen).
+Drucker und Filamentlager von [3dsearch.net](https://3dsearch.net/filament/) in Home Assistant. Installation über HACS (benutzerdefiniertes Repository, Typ Integration), danach auf 3dsearch.net unter **Drucker & Filament → Einstellungen → Home Assistant** einen Schlüssel erstellen und in Home Assistant bei **Integration hinzufügen → 3DSEARCH** einfügen. Ab 0.5.0 gibt es in der Seitenleiste den Eintrag **3DSearch** mit der ganzen Werkstatt (Drucker, Spulen, Slicer, Druckwarteschlange) im Design deines Home-Assistant-Themes – sichtbar für Administratoren. Die Integration ist auf Deutsch, Englisch, Französisch, Spanisch, Italienisch und Niederländisch übersetzt. Drucker, die es auf 3dsearch.net nicht mehr gibt, lassen sich auf ihrer Geräteseite löschen (⋮ → Löschen).
 
 ## License
 

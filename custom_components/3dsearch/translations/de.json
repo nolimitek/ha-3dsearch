@@ -159,6 +159,12 @@
           },
           "slot": {
             "name": "Fach"
+          },
+          "dry_due": {
+            "name": "Sollte getrocknet werden"
+          },
+          "days_open": {
+            "name": "Tage seit Öffnen oder Trocknen"
           }
         }
       },
@@ -223,6 +229,68 @@
             "name": "Spulen"
           }
         }
+      },
+      "total_prints": {
+        "name": "Drucke gesamt"
+      },
+      "total_print_time": {
+        "name": "Druckzeit gesamt"
+      },
+      "total_filament": {
+        "name": "Filament gesamt"
+      },
+      "maintenance": {
+        "name": "Nächste Wartung",
+        "state_attributes": {
+          "task": {
+            "name": "Aufgabe"
+          },
+          "state": {
+            "name": "Stand"
+          },
+          "remaining": {
+            "name": "Noch"
+          },
+          "unit": {
+            "name": "Einheit"
+          },
+          "tasks": {
+            "name": "Aufgaben"
+          }
+        }
+      },
+      "filament_printed": {
+        "name": "Filament verdruckt",
+        "state_attributes": {
+          "prints": {
+            "name": "Drucke"
+          }
+        }
+      },
+      "month_cost": {
+        "name": "Druckkosten diesen Monat",
+        "state_attributes": {
+          "filament": {
+            "name": "Filament"
+          },
+          "operating": {
+            "name": "Strom und Verschleiß"
+          },
+          "prints": {
+            "name": "Drucke"
+          },
+          "grams": {
+            "name": "Filament (g)"
+          }
+        }
+      },
+      "spools_to_dry": {
+        "name": "Spulen zum Trocknen",
+        "state_attributes": {
+          "spools": {
+            "name": "Spulen"
+          }
+        }
       }
     },
     "binary_sensor": {
@@ -237,6 +305,14 @@
         "state_attributes": {
           "error": {
             "name": "Fehler"
+          }
+        }
+      },
+      "maintenance_due": {
+        "name": "Wartung fällig",
+        "state_attributes": {
+          "tasks": {
+            "name": "Fällige Aufgaben"
           }
         }
       }

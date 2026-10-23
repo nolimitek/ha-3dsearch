@@ -221,6 +221,14 @@ async def test_drying(hass: HomeAssistant, aioclient_mock, payload) -> None:
     post = [c for c in aioclient_mock.mock_calls if c[0] == "POST"]
     assert post[-1][2] == {"printer": "a3c12bb1ca4ea642", "cmd": "dry_stop", "box": 0}
 
+    # Printer goes offline: the server drops climate + drying, the switch is greyed out (no command to a dead printer)
+    payload["printers"][0].update(online=False, state="offline", nozzle=None, bed=None, job=None)
+    payload["printers"][0]["boxes"][0].update(temp=None, drying=False, dry_target=None, dry_remain_min=None, dry_duration_min=None)
+    await _refresh(hass, entry, aioclient_mock, payload)
+    assert hass.states.get(sw).state == STATE_UNAVAILABLE
+    assert hass.states.get("sensor.printsaurus_ace_1_temperature").state == STATE_UNKNOWN
+    assert hass.states.get("sensor.printsaurus_nozzle_temperature").state == STATE_UNKNOWN
+
 
 async def test_setup_fails_with_bad_key(hass: HomeAssistant, aioclient_mock) -> None:
     entry = MockConfigEntry(domain=DOMAIN, unique_id="1", data={"api_key": KEY})

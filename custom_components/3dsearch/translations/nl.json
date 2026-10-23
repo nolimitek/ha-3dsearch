@@ -159,6 +159,12 @@
           },
           "slot": {
             "name": "Sleuf"
+          },
+          "dry_due": {
+            "name": "Moet gedroogd worden"
+          },
+          "days_open": {
+            "name": "Dagen sinds openen of drogen"
           }
         }
       },
@@ -223,6 +229,68 @@
             "name": "Spoelen"
           }
         }
+      },
+      "total_prints": {
+        "name": "Prints totaal"
+      },
+      "total_print_time": {
+        "name": "Printtijd totaal"
+      },
+      "total_filament": {
+        "name": "Filament totaal"
+      },
+      "maintenance": {
+        "name": "Volgend onderhoud",
+        "state_attributes": {
+          "task": {
+            "name": "Taak"
+          },
+          "state": {
+            "name": "Status"
+          },
+          "remaining": {
+            "name": "Nog"
+          },
+          "unit": {
+            "name": "Eenheid"
+          },
+          "tasks": {
+            "name": "Taken"
+          }
+        }
+      },
+      "filament_printed": {
+        "name": "Filament geprint",
+        "state_attributes": {
+          "prints": {
+            "name": "Prints"
+          }
+        }
+      },
+      "month_cost": {
+        "name": "Printkosten deze maand",
+        "state_attributes": {
+          "filament": {
+            "name": "Filament"
+          },
+          "operating": {
+            "name": "Stroom en slijtage"
+          },
+          "prints": {
+            "name": "Prints"
+          },
+          "grams": {
+            "name": "Filament (g)"
+          }
+        }
+      },
+      "spools_to_dry": {
+        "name": "Spoelen om te drogen",
+        "state_attributes": {
+          "spools": {
+            "name": "Spoelen"
+          }
+        }
       }
     },
     "binary_sensor": {
@@ -237,6 +305,14 @@
         "state_attributes": {
           "error": {
             "name": "Fout"
+          }
+        }
+      },
+      "maintenance_due": {
+        "name": "Onderhoud nodig",
+        "state_attributes": {
+          "tasks": {
+            "name": "Taken die nodig zijn"
           }
         }
       }

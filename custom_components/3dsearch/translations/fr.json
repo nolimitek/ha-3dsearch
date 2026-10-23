@@ -159,6 +159,12 @@
           },
           "slot": {
             "name": "Emplacement"
+          },
+          "dry_due": {
+            "name": "À sécher"
+          },
+          "days_open": {
+            "name": "Jours depuis l’ouverture ou le séchage"
           }
         }
       },
@@ -223,6 +229,68 @@
             "name": "Bobines"
           }
         }
+      },
+      "total_prints": {
+        "name": "Impressions au total"
+      },
+      "total_print_time": {
+        "name": "Temps d’impression total"
+      },
+      "total_filament": {
+        "name": "Filament total"
+      },
+      "maintenance": {
+        "name": "Prochain entretien",
+        "state_attributes": {
+          "task": {
+            "name": "Tâche"
+          },
+          "state": {
+            "name": "État"
+          },
+          "remaining": {
+            "name": "Restant"
+          },
+          "unit": {
+            "name": "Unité"
+          },
+          "tasks": {
+            "name": "Tâches"
+          }
+        }
+      },
+      "filament_printed": {
+        "name": "Filament imprimé",
+        "state_attributes": {
+          "prints": {
+            "name": "Impressions"
+          }
+        }
+      },
+      "month_cost": {
+        "name": "Coût d’impression ce mois-ci",
+        "state_attributes": {
+          "filament": {
+            "name": "Filament"
+          },
+          "operating": {
+            "name": "Électricité et usure"
+          },
+          "prints": {
+            "name": "Impressions"
+          },
+          "grams": {
+            "name": "Filament (g)"
+          }
+        }
+      },
+      "spools_to_dry": {
+        "name": "Bobines à sécher",
+        "state_attributes": {
+          "spools": {
+            "name": "Bobines"
+          }
+        }
       }
     },
     "binary_sensor": {
@@ -237,6 +305,14 @@
         "state_attributes": {
           "error": {
             "name": "Erreur"
+          }
+        }
+      },
+      "maintenance_due": {
+        "name": "Entretien à faire",
+        "state_attributes": {
+          "tasks": {
+            "name": "Tâches à faire"
           }
         }
       }

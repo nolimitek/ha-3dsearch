@@ -48,11 +48,38 @@
       },
       "low_spools": {
         "default": "mdi:alert-outline"
+      },
+      "total_prints": {
+        "default": "mdi:counter"
+      },
+      "total_print_time": {
+        "default": "mdi:timer-outline"
+      },
+      "total_filament": {
+        "default": "mdi:printer-3d-nozzle-outline"
+      },
+      "maintenance": {
+        "default": "mdi:wrench-clock"
+      },
+      "filament_printed": {
+        "default": "mdi:printer-3d-nozzle"
+      },
+      "month_cost": {
+        "default": "mdi:cash"
+      },
+      "spools_to_dry": {
+        "default": "mdi:tumble-dryer"
       }
     },
     "binary_sensor": {
       "printing": {
         "default": "mdi:printer-3d-nozzle"
+      },
+      "maintenance_due": {
+        "default": "mdi:wrench-clock",
+        "state": {
+          "on": "mdi:wrench-cog"
+        }
       }
     },
     "number": {

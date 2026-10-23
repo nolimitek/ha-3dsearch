@@ -35,6 +35,11 @@ PAYLOAD: dict[str, Any] = {
             "control": True,
             "last_job": {"id": 100, "title": "Benchy", "status": "printing", "start": "2026-10-05T12:00:00Z", "end": None, "grams": None},
             "updated": "2026-10-05T12:20:00Z",
+            "counters": {"prints": 98, "hours": 359, "filament_m": 2850},
+            "maint": {"due": True,
+                      "next": {"title": "Clean the nozzle", "state": "due", "pct": 104, "by": "hours", "remaining": -2.1, "unit": "h"},
+                      "tasks": [{"title": "Clean the nozzle", "state": "due", "pct": 104, "by": "hours", "remaining": -2.1, "unit": "h"},
+                                {"title": "Lubricate the rails", "state": "ok", "pct": 6, "by": "days", "remaining": 85, "unit": "d"}]},
         },
         {
             "id": "01P00A123", "provider": "bambu", "brand": "Bambu Lab", "name": "X1C", "model": "X1 Carbon", "fw": "01.08",
@@ -48,10 +53,15 @@ PAYLOAD: dict[str, Any] = {
                "low": [{"id": 9, "name": "Black PLA", "brand": None, "material": "PLA", "color": "#000000", "left": 80}],
                "items": [
                    {"id": 31, "name": "PLA Blue", "brand": "Sunlu", "material": "PLA", "color": "#0047bb", "left": 358, "total": 1000,
-                    "pct": 36, "value": 5.33, "location": "ACE Pro", "loaded": {"printer": "Printsaurus", "slot": "1"}},
+                    "pct": 36, "value": 5.33, "location": "ACE Pro", "loaded": {"printer": "Printsaurus", "slot": "1"},
+                    "dry": {"days": 9, "limit": None, "due": False}},
                    {"id": 9, "name": "Black PLA", "brand": None, "material": "PLA", "color": "#000000", "left": 80, "total": 1000,
-                    "pct": 8, "value": None, "location": "Shelf", "loaded": None},
-               ]},
+                    "pct": 8, "value": None, "location": "Shelf", "loaded": None, "dry": None},
+               ],
+               "dry_due": [{"id": 12, "name": "TPU Red", "brand": "Sunlu", "material": "TPU", "days": 21, "limit": 14}]},
+    "usage": {"filament_g": 12623, "prints": 140,
+              "month": {"start": "2026-10-01T00:00:00Z", "prints": 20, "grams": 908, "material": 13.13, "run": 2.4, "cost": 15.53,
+                        "currency": "EUR"}},
     "time": "2026-10-05T12:20:00Z",
 }
 
