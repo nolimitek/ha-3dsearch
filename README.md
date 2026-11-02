@@ -83,10 +83,11 @@ Since 0.5.0 the integration adds a **3DSearch** entry to the sidebar. It opens t
 
 ## Installation
 
-1. HACS → ⋮ → **Custom repositories** → add `https://github.com/nolimitek/ha-3dsearch`, type **Integration**.
-2. Install **3DSEARCH Printers & Filament** and restart Home Assistant.
-3. On [3dsearch.net](https://3dsearch.net/filament/#settings) open **Printers & Filament → Settings → Home Assistant** and create a key.
-4. In Home Assistant: **Settings → Devices & services → Add integration → 3DSEARCH** and paste the key.
+1. In HACS, search for **3DSEARCH Printers & Filament**, install it and restart Home Assistant.
+
+   If HACS doesn't find it yet: HACS → ⋮ → **Custom repositories** → add `https://github.com/nolimitek/ha-3dsearch`, type **Integration**, then install it.
+2. On [3dsearch.net](https://3dsearch.net/filament/#settings) open **Printers & Filament → Settings → Home Assistant** and create a key.
+3. In Home Assistant: **Settings → Devices & services → Add integration → 3DSEARCH** and paste the key.
 
 The key gives read access to your printers and spools and can pause/resume/cancel prints. You can revoke it on 3dsearch.net at any time.
 
@@ -112,7 +113,7 @@ actions:
 
 ## Deutsch
 
-Drucker und Filamentlager von [3dsearch.net](https://3dsearch.net/filament/) in Home Assistant. Installation über HACS (benutzerdefiniertes Repository, Typ Integration), danach auf 3dsearch.net unter **Drucker & Filament → Einstellungen → Home Assistant** einen Schlüssel erstellen und in Home Assistant bei **Integration hinzufügen → 3DSEARCH** einfügen. Ab 0.5.0 gibt es in der Seitenleiste den Eintrag **3DSearch** mit der ganzen Werkstatt (Drucker, Spulen, Slicer, Druckwarteschlange) im Design deines Home-Assistant-Themes – sichtbar für Administratoren; unter **Geräte & Dienste → 3DSEARCH → Konfigurieren** lässt sie sich abschalten. Ab 0.6.0 kannst du im Karten-Editor jeden Teil der Druckerkarte ein- und ausblenden, dazu kommen drei kleine Karten für den aktuellen Druck, die Filamentfächer und die Filamentbox. Die Integration ist auf Deutsch, Englisch, Französisch, Spanisch, Italienisch und Niederländisch übersetzt. Drucker, die es auf 3dsearch.net nicht mehr gibt, lassen sich auf ihrer Geräteseite löschen (⋮ → Löschen).
+Drucker und Filamentlager von [3dsearch.net](https://3dsearch.net/filament/) in Home Assistant. Installation über HACS: nach **3DSEARCH Printers & Filament** suchen, falls es dort noch nicht auftaucht als benutzerdefiniertes Repository (Typ Integration) hinzufügen. Danach auf 3dsearch.net unter **Drucker & Filament → Einstellungen → Home Assistant** einen Schlüssel erstellen und in Home Assistant bei **Integration hinzufügen → 3DSEARCH** einfügen. Ab 0.5.0 gibt es in der Seitenleiste den Eintrag **3DSearch** mit der ganzen Werkstatt (Drucker, Spulen, Slicer, Druckwarteschlange) im Design deines Home-Assistant-Themes – sichtbar für Administratoren; unter **Geräte & Dienste → 3DSEARCH → Konfigurieren** lässt sie sich abschalten. Ab 0.6.0 kannst du im Karten-Editor jeden Teil der Druckerkarte ein- und ausblenden, dazu kommen drei kleine Karten für den aktuellen Druck, die Filamentfächer und die Filamentbox. Die Integration ist auf Deutsch, Englisch, Französisch, Spanisch, Italienisch und Niederländisch übersetzt. Drucker, die es auf 3dsearch.net nicht mehr gibt, lassen sich auf ihrer Geräteseite löschen (⋮ → Löschen).
 
 ## License
 
