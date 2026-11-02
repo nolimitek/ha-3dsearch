@@ -49,7 +49,7 @@ State, progress ring with remaining time and end, temperatures, the filament slo
 type: custom:threedsearch-printer-card
 device: <printer device>
 name: Workshop            # optional
-hide: [temps, boxes]      # any of: head, image, job, temps, slots, boxes, buttons
+hide: [temps, boxes]      # any of: head, image, job, temps, slots, boxes, boximage, buttons
 ```
 
 Three small cards show a single part and fit next to each other:
@@ -62,7 +62,7 @@ Three small cards show a single part and fit next to each other:
 
 They take the same `device` and `name` options. The print card also takes `hide: [head, image, buttons]`.
 
-The printer picture is your own photo from 3dsearch.net, otherwise the picture from the manufacturer's cloud. Printers without either (Bambu, Klipper, Prusa) get a drawing that moves while they print.
+The printer picture is your own photo from 3dsearch.net, otherwise the picture from the manufacturer's cloud. Printers without either (Bambu, Klipper, Prusa) get a drawing that moves while they print. ACE, AMS and other filament boxes are drawn with their spools in the real colours; the running slot feeds filament, and a drying box shows rising heat. The box card takes `hide: [boximage]`.
 
 <img src="https://raw.githubusercontent.com/nolimitek/ha-3dsearch/main/docs/images/stock-card.png" alt="3DSEARCH filament stock card" width="420">
 

@@ -10,15 +10,16 @@
  *   type: custom:threedsearch-slots-card  device: <id>   (filament slots only)
  *   type: custom:threedsearch-box-card    device: <id>   (ACE/AMS with drying only)
  *
- * Options of the printer card and the small cards: name: <text>, hide: [head, image, job, temps, slots, boxes, buttons]
+ * Options of the printer card and the small cards: name: <text>, hide: [head, image, job, temps, slots, boxes, boximage, buttons]
  *
  * Entities are found through the entity registry (platform "3dsearch" + translation key), so the cards work
  * whatever language Home Assistant used to name the entity ids. No external libraries, theme colours only.
  */
 (() => {
 "use strict";
-const VERSION = "0.6.0";
+const VERSION = "0.6.1";
 const DOMAIN = "3dsearch";
+const EXT_SLOT = 100;   // slot index of the external spool holder (3dsearch.net)
 
 const I18N = {
   en: { dry: "Dry", dryStop: "Stop drying", drying: "Drying", left: "{t} left", dryStart: "Start drying", dryCancel: "Close", dTemp: "Temperature", dHours: "Hours", humidity: "Humidity",
@@ -27,42 +28,42 @@ const I18N = {
         sure: "Really cancel?", slots: "Filament", noSpool: "no spool", stock: "Filament stock", spools: "spools", low: "Almost empty",
         noLow: "No spool is running low.", pick: "Printer", pickHint: "Add a printer in the 3DSEARCH integration first.", lastSeen: "last seen",
         idle: "Idle", printing: "Printing", paused: "Paused", error: "Error", offline: "Offline", today: "today", tomorrow: "tomorrow",
-        noJob: "No print running.", noBox: "This printer has no filament box.", nothing: "Nothing selected.", show: "Show", cardName: "Name (optional)", secHead: "Name and status", secImage: "Printer picture", secJob: "Current print", secTemps: "Temperatures", secSlots: "Filament slots", secBoxes: "Filament box (ACE, AMS)", secButtons: "Pause, resume, cancel" },
+        noJob: "No print running.", noBox: "This printer has no filament box.", nothing: "Nothing selected.", show: "Show", cardName: "Name (optional)", secHead: "Name and status", secImage: "Printer picture", secBoxImage: "Filament box picture", secJob: "Current print", secTemps: "Temperatures", secSlots: "Filament slots", secBoxes: "Filament box (ACE, AMS)", secButtons: "Pause, resume, cancel" },
   de: { dry: "Trocknen", dryStop: "Trocknen stoppen", drying: "Trocknet", left: "noch {t}", dryStart: "Trocknen starten", dryCancel: "Schließen", dTemp: "Temperatur", dHours: "Stunden", humidity: "Feuchte",
         all: "Alle anzeigen ({n})", less: "Weniger anzeigen", lowN: "{n} fast leer", inSlot: "Fach", noSpools: "Noch keine Spulen.",
         remaining: "Restzeit", ends: "Ende", layer: "Schicht", nozzle: "Düse", bed: "Bett", pause: "Pause", resume: "Fortsetzen", cancel: "Abbrechen",
         sure: "Wirklich abbrechen?", slots: "Filament", noSpool: "keine Spule", stock: "Filamentlager", spools: "Spulen", low: "Fast leer",
         noLow: "Keine Spule ist fast leer.", pick: "Drucker", pickHint: "Lege zuerst in der 3DSEARCH-Integration einen Drucker an.", lastSeen: "zuletzt",
         idle: "Bereit", printing: "Druckt", paused: "Pausiert", error: "Fehler", offline: "Offline", today: "heute", tomorrow: "morgen",
-        noJob: "Kein laufender Druck.", noBox: "Dieser Drucker hat keine Filamentbox.", nothing: "Nichts ausgewählt.", show: "Anzeigen", cardName: "Name (optional)", secHead: "Name und Status", secImage: "Druckerbild", secJob: "Aktueller Druck", secTemps: "Temperaturen", secSlots: "Filamentfächer", secBoxes: "Filamentbox (ACE, AMS)", secButtons: "Pause, Fortsetzen, Abbrechen" },
+        noJob: "Kein laufender Druck.", noBox: "Dieser Drucker hat keine Filamentbox.", nothing: "Nichts ausgewählt.", show: "Anzeigen", cardName: "Name (optional)", secHead: "Name und Status", secImage: "Druckerbild", secBoxImage: "Bild der Filamentbox", secJob: "Aktueller Druck", secTemps: "Temperaturen", secSlots: "Filamentfächer", secBoxes: "Filamentbox (ACE, AMS)", secButtons: "Pause, Fortsetzen, Abbrechen" },
   fr: { dry: "Sécher", dryStop: "Arrêter le séchage", drying: "Séchage", left: "encore {t}", dryStart: "Lancer le séchage", dryCancel: "Fermer", dTemp: "Température", dHours: "Heures", humidity: "Humidité",
         all: "Tout afficher ({n})", less: "Afficher moins", lowN: "{n} presque vides", inSlot: "Empl.", noSpools: "Aucune bobine pour l’instant.",
         remaining: "Restant", ends: "Fin", layer: "Couche", nozzle: "Buse", bed: "Plateau", pause: "Pause", resume: "Reprendre", cancel: "Annuler",
         sure: "Vraiment annuler ?", slots: "Filament", noSpool: "pas de bobine", stock: "Stock de filament", spools: "bobines", low: "Presque vides",
         noLow: "Aucune bobine n’est presque vide.", pick: "Imprimante", pickHint: "Ajoutez d’abord une imprimante dans l’intégration 3DSEARCH.", lastSeen: "vue",
         idle: "Prête", printing: "Impression", paused: "En pause", error: "Erreur", offline: "Hors ligne", today: "aujourd’hui", tomorrow: "demain",
-        noJob: "Aucune impression en cours.", noBox: "Cette imprimante n’a pas de boîtier à filament.", nothing: "Rien de sélectionné.", show: "Afficher", cardName: "Nom (facultatif)", secHead: "Nom et état", secImage: "Image de l’imprimante", secJob: "Impression en cours", secTemps: "Températures", secSlots: "Emplacements de filament", secBoxes: "Boîtier à filament (ACE, AMS)", secButtons: "Pause, reprise, annulation" },
+        noJob: "Aucune impression en cours.", noBox: "Cette imprimante n’a pas de boîtier à filament.", nothing: "Rien de sélectionné.", show: "Afficher", cardName: "Nom (facultatif)", secHead: "Nom et état", secImage: "Image de l’imprimante", secBoxImage: "Image du boîtier à filament", secJob: "Impression en cours", secTemps: "Températures", secSlots: "Emplacements de filament", secBoxes: "Boîtier à filament (ACE, AMS)", secButtons: "Pause, reprise, annulation" },
   es: { dry: "Secar", dryStop: "Detener secado", drying: "Secando", left: "faltan {t}", dryStart: "Iniciar secado", dryCancel: "Cerrar", dTemp: "Temperatura", dHours: "Horas", humidity: "Humedad",
         all: "Mostrar todas ({n})", less: "Mostrar menos", lowN: "{n} casi vacías", inSlot: "Ranura", noSpools: "Todavía no hay bobinas.",
         remaining: "Restante", ends: "Fin", layer: "Capa", nozzle: "Boquilla", bed: "Cama", pause: "Pausa", resume: "Reanudar", cancel: "Cancelar",
         sure: "¿Cancelar de verdad?", slots: "Filamento", noSpool: "sin bobina", stock: "Stock de filamento", spools: "bobinas", low: "Casi vacías",
         noLow: "Ninguna bobina está casi vacía.", pick: "Impresora", pickHint: "Añade primero una impresora en la integración 3DSEARCH.", lastSeen: "vista",
         idle: "Lista", printing: "Imprimiendo", paused: "En pausa", error: "Error", offline: "Sin conexión", today: "hoy", tomorrow: "mañana",
-        noJob: "Ninguna impresión en curso.", noBox: "Esta impresora no tiene caja de filamento.", nothing: "Nada seleccionado.", show: "Mostrar", cardName: "Nombre (opcional)", secHead: "Nombre y estado", secImage: "Imagen de la impresora", secJob: "Impresión actual", secTemps: "Temperaturas", secSlots: "Ranuras de filamento", secBoxes: "Caja de filamento (ACE, AMS)", secButtons: "Pausa, reanudar, cancelar" },
+        noJob: "Ninguna impresión en curso.", noBox: "Esta impresora no tiene caja de filamento.", nothing: "Nada seleccionado.", show: "Mostrar", cardName: "Nombre (opcional)", secHead: "Nombre y estado", secImage: "Imagen de la impresora", secBoxImage: "Imagen de la caja de filamento", secJob: "Impresión actual", secTemps: "Temperaturas", secSlots: "Ranuras de filamento", secBoxes: "Caja de filamento (ACE, AMS)", secButtons: "Pausa, reanudar, cancelar" },
   it: { dry: "Essiccare", dryStop: "Ferma essiccazione", drying: "In essiccazione", left: "ancora {t}", dryStart: "Avvia essiccazione", dryCancel: "Chiudi", dTemp: "Temperatura", dHours: "Ore", humidity: "Umidità",
         all: "Mostra tutte ({n})", less: "Mostra meno", lowN: "{n} quasi vuote", inSlot: "Slot", noSpools: "Ancora nessuna bobina.",
         remaining: "Rimanente", ends: "Fine", layer: "Strato", nozzle: "Ugello", bed: "Piatto", pause: "Pausa", resume: "Riprendi", cancel: "Annulla",
         sure: "Annullare davvero?", slots: "Filamento", noSpool: "nessuna bobina", stock: "Scorte di filamento", spools: "bobine", low: "Quasi vuote",
         noLow: "Nessuna bobina è quasi vuota.", pick: "Stampante", pickHint: "Aggiungi prima una stampante nell’integrazione 3DSEARCH.", lastSeen: "vista",
         idle: "Pronta", printing: "In stampa", paused: "In pausa", error: "Errore", offline: "Offline", today: "oggi", tomorrow: "domani",
-        noJob: "Nessuna stampa in corso.", noBox: "Questa stampante non ha un box filamento.", nothing: "Nulla di selezionato.", show: "Mostra", cardName: "Nome (facoltativo)", secHead: "Nome e stato", secImage: "Immagine della stampante", secJob: "Stampa in corso", secTemps: "Temperature", secSlots: "Slot filamento", secBoxes: "Box filamento (ACE, AMS)", secButtons: "Pausa, riprendi, annulla" },
+        noJob: "Nessuna stampa in corso.", noBox: "Questa stampante non ha un box filamento.", nothing: "Nulla di selezionato.", show: "Mostra", cardName: "Nome (facoltativo)", secHead: "Nome e stato", secImage: "Immagine della stampante", secBoxImage: "Immagine del box filamento", secJob: "Stampa in corso", secTemps: "Temperature", secSlots: "Slot filamento", secBoxes: "Box filamento (ACE, AMS)", secButtons: "Pausa, riprendi, annulla" },
   nl: { dry: "Drogen", dryStop: "Drogen stoppen", drying: "Droogt", left: "nog {t}", dryStart: "Drogen starten", dryCancel: "Sluiten", dTemp: "Temperatuur", dHours: "Uren", humidity: "Vocht",
         all: "Alles tonen ({n})", less: "Minder tonen", lowN: "{n} bijna leeg", inSlot: "Sleuf", noSpools: "Nog geen spoelen.",
         remaining: "Resterend", ends: "Einde", layer: "Laag", nozzle: "Nozzle", bed: "Bed", pause: "Pauze", resume: "Hervatten", cancel: "Annuleren",
         sure: "Echt annuleren?", slots: "Filament", noSpool: "geen spoel", stock: "Filamentvoorraad", spools: "spoelen", low: "Bijna leeg",
         noLow: "Geen spoel is bijna leeg.", pick: "Printer", pickHint: "Voeg eerst een printer toe in de 3DSEARCH-integratie.", lastSeen: "gezien",
         idle: "Gereed", printing: "Print", paused: "Gepauzeerd", error: "Fout", offline: "Offline", today: "vandaag", tomorrow: "morgen",
-        noJob: "Geen print bezig.", noBox: "Deze printer heeft geen filamentbox.", nothing: "Niets geselecteerd.", show: "Tonen", cardName: "Naam (optioneel)", secHead: "Naam en status", secImage: "Printerafbeelding", secJob: "Huidige print", secTemps: "Temperaturen", secSlots: "Filamentsleuven", secBoxes: "Filamentbox (ACE, AMS)", secButtons: "Pauze, hervatten, annuleren" },
+        noJob: "Geen print bezig.", noBox: "Deze printer heeft geen filamentbox.", nothing: "Niets geselecteerd.", show: "Tonen", cardName: "Naam (optioneel)", secHead: "Naam en status", secImage: "Printerafbeelding", secBoxImage: "Afbeelding van de filamentbox", secJob: "Huidige print", secTemps: "Temperaturen", secSlots: "Filamentsleuven", secBoxes: "Filamentbox (ACE, AMS)", secButtons: "Pauze, hervatten, annuleren" },
 };
 
 const ICONS = {
@@ -141,6 +142,33 @@ function printerArt(model, o = {}) {
         <rect x="25" y="${tip - 10}" width="70" height="4" rx="1.5" fill="#3f4651"/>${head(tip)}</g>`;
   }
   return `<svg class="${cls}" viewBox="0 0 120 120" aria-hidden="true">${defs}${body}</svg>`;
+}
+
+// Drawn filament box (ACE, AMS, CFS, CANVAS …), same drawing as the 3DSEARCH workshop: the spools in their real colours (the winding is as
+// thick as what is left) and a lamp per slot. The running slot feeds filament upwards; while drying heat rises and the window glows;
+// from 40 % humidity a drop. slots: attributes of the slot sensors of this box.
+function boxArt(slots, o = {}) {
+  const n = Math.max(1, Math.min(8, slots.length || 4)), w = 132 / n, f = (v) => v.toFixed(1);
+  let sp = "", leds = "", feed = "";
+  for (let i = 0; i < n; i++) {
+    const sl = slots[i], x = 14 + i * w, cx = x + w / 2, col = sl && sl.material ? hex(sl.color) : null;
+    if (col) {
+      const pct = typeof sl.remaining_percent === "number" ? Math.max(0, Math.min(1, sl.remaining_percent / 100)) : 0.7;
+      const hw = 10 + 28 * pct, y = 50 - hw / 2;
+      sp += `<rect x="${f(x + 5)}" y="46" width="${f(w - 10)}" height="8" fill="#4a525e"/>`
+        + `<rect x="${f(x + 5.5)}" y="${f(y)}" width="${f(w - 11)}" height="${f(hw)}" rx="3" fill="${col}" stroke="#fff" stroke-opacity=".16" stroke-width=".7"/>`
+        + `<rect x="${f(x + 5.5)}" y="${f(y)}" width="${f(w - 11)}" height="${f(hw * 0.28)}" rx="3" fill="#fff" opacity=".22"/>`
+        + `<rect x="${f(x + 3)}" y="30" width="3" height="40" rx="1.5" fill="#9aa2ad"/><rect x="${f(x + w - 6)}" y="30" width="3" height="40" rx="1.5" fill="#9aa2ad"/>`;
+      if (sl.in_use && o.run) feed = `<path class="bx-feed" d="M${f(cx)} ${f(y)}V2" stroke="${col}" stroke-width="1.8" fill="none"/>`;
+    } else sp += `<rect x="${f(x + 4)}" y="31" width="${f(w - 8)}" height="38" rx="4" fill="none" stroke="#3a414b" stroke-dasharray="3 3"/>`;
+    leds += `<circle cx="${f(cx)}" cy="83" r="2.2" fill="${col || "#454c57"}"/>`;
+  }
+  const waves = o.dry ? [32, 64, 96, 128].map((x, i) => `<path class="bx-wave" style="animation-delay:${(i * 0.55).toFixed(2)}s" d="M${x} 14c-3.5-2.5 3.5-5 0-7.5s3.5-5 0-7.5" fill="none" stroke="#ff8a3d" stroke-width="2.4" stroke-linecap="round"/>`).join("") : "";
+  const drop = o.humid && !o.dry ? `<path d="M146 17.5c-2.2 3-3.4 4.8-3.4 6.3a3.4 3.4 0 0 0 6.8 0c0-1.5-1.2-3.3-3.4-6.3z" fill="#3b82f6"/>` : "";
+  return `<svg class="bxa${o.dry ? " dry" : ""}" viewBox="0 0 160 96" aria-hidden="true"><rect x="6" y="16" width="148" height="76" rx="10" fill="#30363f" stroke="#4b535e" stroke-width=".8"/>`
+    + `<rect x="6" y="16" width="148" height="10" rx="5" fill="#c9ced6"/><rect x="6" y="21" width="148" height="5" fill="#c9ced6"/><rect x="14" y="27" width="132" height="47" rx="5" fill="#161b22"/>${sp}`
+    + (o.dry ? `<rect class="bx-glow" x="14" y="27" width="132" height="47" rx="5" fill="#ff7a1a"/>` : "")
+    + `<path d="M14 27h40L20 74h-6z" fill="#fff" opacity=".05"/>${leds}${feed}${waves}${drop}</svg>`;
 }
 
 function lang(hass) {
@@ -226,7 +254,7 @@ const BASE_CSS = `
 `;
 
 // Parts of the printer card, in order. `hide` in the card config leaves them out.
-const SECTIONS = [["head", "secHead"], ["image", "secImage"], ["job", "secJob"], ["temps", "secTemps"], ["slots", "secSlots"], ["boxes", "secBoxes"], ["buttons", "secButtons"]];
+const SECTIONS = [["head", "secHead"], ["image", "secImage"], ["job", "secJob"], ["temps", "secTemps"], ["slots", "secSlots"], ["boxes", "secBoxes"], ["boximage", "secBoxImage"], ["buttons", "secButtons"]];
 
 // ── Printer card ─────────────────────────────────────────────────────────────
 class ThreeDSearchPrinterCard extends HTMLElement {
@@ -234,7 +262,8 @@ class ThreeDSearchPrinterCard extends HTMLElement {
 
   static getConfigElement() {
     const editor = document.createElement("threedsearch-printer-card-editor");
-    editor.only = this.ONLY;
+    // A small card always shows its main part, so that one gets no tick box
+    editor.only = this.ONLY && this.ONLY.filter((k) => !(this.FIXED || []).includes(k));
     return editor;
   }
 
@@ -388,7 +417,10 @@ class ThreeDSearchPrinterCard extends HTMLElement {
   /** One block per ACE/AMS: climate, drying state, and for ACE the drying controls with presets. */
   _boxesHtml(t) {
     const hass = this._hass, boxes = this._ents.boxes || {};
-    return Object.entries(boxes).sort(([a], [b]) => a - b).map(([bid, b]) => {
+    // Slots → box: four per box in slot order, the last box takes the rest (AMS HT = one slot at the end). No external spool holder.
+    const inBox = (this._ents.slots || []).map((id) => hass.states[id]?.attributes).filter((a) => a && (a.index ?? 0) < EXT_SLOT);
+    const nBox = Object.keys(boxes).length, printing = this._st("status")?.state === "printing";
+    return Object.entries(boxes).sort(([a], [b]) => a - b).map(([bid, b], bi) => {
       const st = (k) => (b[k] ? hass.states[b[k]] : undefined);
       const sw = st("drying"), rem = st("dry_remaining"), tmp = st("temperature"), hum = st("humidity");
       // Switch unavailable = printer offline → button greyed out like pause/resume/cancel (not hidden)
@@ -402,11 +434,13 @@ class ThreeDSearchPrinterCard extends HTMLElement {
       const open = this._dryOpen === bid && ctl && !drying;
       const v = this._dryVals?.[bid] || { temp: +(st("dry_temperature")?.state) || 45, hours: +(st("dry_duration")?.state) || 4 };
       const presets = [["PLA", 45, 4], ["TPU", 50, 6], ["PETG", 55, 6], ["ABS/ASA", 55, 8]];
-      return `<div class="sec box" data-box="${esc(bid)}">
+      const mine = nBox === 1 ? inBox : inBox.slice(bi * 4, bi === nBox - 1 ? undefined : bi * 4 + 4);
+      const art = this._on("boximage") ? `<span class="bxart">${boxArt(mine, { dry: drying, humid: usable(hum) && +hum.state >= 40, run: printing })}</span>` : "";
+      return `<div class="sec box" data-box="${esc(bid)}"><div class="bxtop">${art}
         <div class="bxh"><b>${esc(b.label || "Box")}</b>${chips}<span class="grow"></span>
           ${ctl ? (drying ? `<button class="act sm danger" data-dry="stop">${svg(ICONS.stop, 14)}<span>${esc(t.dryStop)}</span></button>`
                           : `<button class="act sm" data-dry="${open ? "close" : "open"}">${svg(ICONS.heat, 14)}<span>${esc(open ? t.dryCancel : t.dry)}</span></button>`)
-                : locked ? `<button class="act sm" disabled>${svg(ICONS.heat, 14)}<span>${esc(t.dry)}</span></button>` : ""}</div>
+                : locked ? `<button class="act sm" disabled>${svg(ICONS.heat, 14)}<span>${esc(t.dry)}</span></button>` : ""}</div></div>
         ${drying ? `<div class="dryon" data-eid="${esc(b.drying || b.dry_remaining)}">${svg(ICONS.heat, 16)}<span><b>${esc(t.drying)}</b>${target ? ` · ${esc(target)} °C` : ""}${left ? ` · ${esc(t.left.replace("{t}", fmtMinutes(left)))}` : ""}</span></div>` : ""}
         ${open ? `<div class="drypanel">
             <div class="presets">${presets.map(([m, tc, hh]) => `<button data-pre="${tc},${hh}" class="${v.temp === tc && v.hours === hh ? "on" : ""}"><b>${m}</b><span>${tc} °C · ${hh} h</span></button>`).join("")}</div>
@@ -473,12 +507,14 @@ class ThreeDSearchJobCard extends ThreeDSearchPrinterCard {
 
 class ThreeDSearchSlotsCard extends ThreeDSearchPrinterCard {
   static ONLY = ["slots"];
+  static FIXED = ["slots"];
   getCardSize() { return 2; }
   getGridOptions() { return { columns: 6, min_columns: 3, rows: "auto" }; }
 }
 
 class ThreeDSearchBoxCard extends ThreeDSearchPrinterCard {
-  static ONLY = ["boxes"];
+  static ONLY = ["boxes", "boximage"];
+  static FIXED = ["boxes"];
   getCardSize() { return 2; }
   getGridOptions() { return { columns: 6, min_columns: 4, rows: "auto" }; }
 }
@@ -497,6 +533,17 @@ const PRINTER_CSS = `
   .pa.heat .pa-noz { animation: pa-glow 1.1s ease-in-out infinite alternate; }
   @keyframes pa-glow { to { fill: #ff5a1f; } }
   .pa.off { filter: grayscale(1); opacity: .5; }
+  .bxtop { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .bxtop .bxh { flex: 1 1 150px; min-width: 0; }
+  .bxart { display: block; width: 120px; height: 72px; flex: none; }
+  .bxa { display: block; width: 100%; height: 100%; overflow: visible; }
+  .bxa .bx-feed { stroke-dasharray: 3 3; animation: bx-feed .7s linear infinite; }
+  @keyframes bx-feed { to { stroke-dashoffset: -6; } }
+  .bxa .bx-wave { opacity: 0; animation: bx-rise 2.2s ease-in infinite; }
+  @keyframes bx-rise { 0% { transform: translateY(6px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(-10px); opacity: 0; } }
+  .bxa .bx-glow { opacity: .1; animation: bx-glow 2.4s ease-in-out infinite alternate; }
+  @keyframes bx-glow { to { opacity: .3; } }
+  @media (prefers-reduced-motion: reduce) { .bxa .bx-feed, .bxa .bx-wave, .bxa .bx-glow { animation: none; } .bxa .bx-wave { opacity: .8; } }
   @media (prefers-reduced-motion: reduce) { .pa .pa-head, .pa .pa-noz { animation: none; } }
   ha-card > .sec:first-child { margin-top: 0; }
   ha-card.solo > .lbl + .sec { margin-top: 0; }
@@ -689,7 +736,7 @@ class ThreeDSearchPrinterCardEditor extends HTMLElement {
       </style>
       ${devs.length ? `<label>${esc(t.pick)}<select>${devs.map((d) => `<option value="${esc(d.id)}"${d.id === this._config.device ? " selected" : ""}>${esc(d.name)}</option>`).join("")}</select></label>
         <label>${esc(t.cardName)}<input type="text" value="${esc(this._config.name || "")}"></label>
-        ${parts.length > 1 ? `<fieldset><legend>${esc(t.show)}</legend>${parts.map(([k, lb]) => `<label class="chk"><input type="checkbox" data-part="${k}"${hide.includes(k) ? "" : " checked"}>${esc(t[lb])}</label>`).join("")}</fieldset>` : ""}`
+        ${parts.length ? `<fieldset><legend>${esc(t.show)}</legend>${parts.map(([k, lb]) => `<label class="chk"><input type="checkbox" data-part="${k}"${hide.includes(k) ? "" : " checked"}>${esc(t[lb])}</label>`).join("")}</fieldset>` : ""}`
                     : `<p>${esc(t.pickHint)}</p>`}`;
     const sel = this.shadowRoot.querySelector("select");
     if (sel) {
