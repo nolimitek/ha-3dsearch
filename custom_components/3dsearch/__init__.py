@@ -13,7 +13,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
 from .api import ThreeDSearchApi
-from .const import CONF_API_KEY, DOMAIN
+from .const import CONF_API_KEY, CONF_SHOW_PANEL, DEFAULT_SHOW_PANEL, DOMAIN
 from .coordinator import ThreeDSearchConfigEntry, ThreeDSearchCoordinator
 from .entity import account_device
 from .panel import PANEL_FILE, PANEL_JS_URL, async_register_websocket, async_remove_panel, async_setup_panel
@@ -28,7 +28,7 @@ CARD_FILE = Path(__file__).parent / "frontend" / "3dsearch-card.js"
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Serve the dashboard cards (custom:3dsearch-printer-card, custom:3dsearch-stock-card) and load them in every dashboard."""
+    """Serve the dashboard cards (frontend/3dsearch-card.js) and load them in every dashboard."""
     async_register_websocket(hass)
     if "frontend" not in hass.config.components or getattr(hass, "http", None) is None:
         return True   # e.g. tests without a frontend
@@ -82,8 +82,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ThreeDSearchConfigEntry)
     ).id
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
-    # Sidebar "3D printing" (embedded workshop) only where 3dsearch.net unlocked it for the account
-    if coordinator.panel_enabled:
+    # Sidebar "3DSearch" (embedded workshop) where 3dsearch.net unlocked it, unless the user turned it off in the options.
+    # Changing the option reloads the entry (below), so the entry appears or goes without a restart.
+    if coordinator.panel_enabled and entry.options.get(CONF_SHOW_PANEL, DEFAULT_SHOW_PANEL):
         manifest = json.loads(await hass.async_add_executor_job((Path(__file__).parent / "manifest.json").read_text))
         try:
             await async_setup_panel(hass, entry.entry_id, manifest.get("version", "0"))
@@ -112,5 +113,5 @@ async def async_remove_config_entry_device(
 
 
 async def _async_options_updated(hass: HomeAssistant, entry: ThreeDSearchConfigEntry) -> None:
-    """Apply a new polling interval."""
+    """Apply new options (polling interval, sidebar entry)."""
     await hass.config_entries.async_reload(entry.entry_id)

@@ -38,10 +38,12 @@
       "init": {
         "title": "Options",
         "data": {
-          "scan_interval": "Update interval"
+          "scan_interval": "Update interval",
+          "show_panel": "Show 3DSearch in the sidebar"
         },
         "data_description": {
-          "scan_interval": "How often Home Assistant asks 3dsearch.net (seconds). Printer clouds are synced at most once a minute."
+          "scan_interval": "How often Home Assistant asks 3dsearch.net (seconds). Printer clouds are synced at most once a minute.",
+          "show_panel": "Adds the whole workshop with slicer and print queue to the sidebar. Turn this off if you only use the dashboard cards."
         }
       }
     }

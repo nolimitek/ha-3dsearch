@@ -38,10 +38,12 @@
       "init": {
         "title": "Opties",
         "data": {
-          "scan_interval": "Update-interval"
+          "scan_interval": "Update-interval",
+          "show_panel": "3DSearch in de zijbalk tonen"
         },
         "data_description": {
-          "scan_interval": "Hoe vaak Home Assistant 3dsearch.net bevraagt (seconden). Printerclouds worden hooguit één keer per minuut gesynchroniseerd."
+          "scan_interval": "Hoe vaak Home Assistant 3dsearch.net bevraagt (seconden). Printerclouds worden hooguit één keer per minuut gesynchroniseerd.",
+          "show_panel": "Voegt de hele werkplaats met slicer en printwachtrij toe aan de zijbalk. Schakel dit uit als je alleen de dashboardkaarten gebruikt."
         }
       }
     }

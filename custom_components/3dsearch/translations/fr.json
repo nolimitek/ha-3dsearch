@@ -38,10 +38,12 @@
       "init": {
         "title": "Options",
         "data": {
-          "scan_interval": "Intervalle de mise à jour"
+          "scan_interval": "Intervalle de mise à jour",
+          "show_panel": "Afficher 3DSearch dans la barre latérale"
         },
         "data_description": {
-          "scan_interval": "Fréquence à laquelle Home Assistant interroge 3dsearch.net (secondes). Les clouds des imprimantes sont synchronisés au plus une fois par minute."
+          "scan_interval": "Fréquence à laquelle Home Assistant interroge 3dsearch.net (secondes). Les clouds des imprimantes sont synchronisés au plus une fois par minute.",
+          "show_panel": "Ajoute tout l’atelier avec le slicer et la file d’impression à la barre latérale. Désactivez cette option si vous n’utilisez que les cartes du tableau de bord."
         }
       }
     }

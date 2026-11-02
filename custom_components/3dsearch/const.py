@@ -10,6 +10,8 @@ SITE_URL: Final = "https://3dsearch.net/filament/"
 
 CONF_API_KEY: Final = "api_key"
 CONF_SCAN_INTERVAL: Final = "scan_interval"
+CONF_SHOW_PANEL: Final = "show_panel"
+DEFAULT_SHOW_PANEL: Final = True
 DEFAULT_SCAN_INTERVAL: Final = 60  # seconds; the server syncs printer clouds at most once a minute
 MIN_SCAN_INTERVAL: Final = 30
 MAX_SCAN_INTERVAL: Final = 600

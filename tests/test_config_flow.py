@@ -81,4 +81,4 @@ async def test_options(hass: HomeAssistant, aioclient_mock, payload) -> None:
     result = await hass.config_entries.options.async_init(entry.entry_id)
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"scan_interval": 120})
     assert result["type"] is FlowResultType.CREATE_ENTRY
-    assert entry.options == {"scan_interval": 120}
+    assert entry.options == {"scan_interval": 120, "show_panel": True}

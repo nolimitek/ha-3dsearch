@@ -38,10 +38,12 @@
       "init": {
         "title": "Optionen",
         "data": {
-          "scan_interval": "Abfrageintervall"
+          "scan_interval": "Abfrageintervall",
+          "show_panel": "3DSearch in der Seitenleiste anzeigen"
         },
         "data_description": {
-          "scan_interval": "Wie oft Home Assistant bei 3dsearch.net nachfragt (Sekunden). Drucker-Clouds werden höchstens einmal pro Minute abgeglichen."
+          "scan_interval": "Wie oft Home Assistant bei 3dsearch.net nachfragt (Sekunden). Drucker-Clouds werden höchstens einmal pro Minute abgeglichen.",
+          "show_panel": "Zeigt die ganze Werkstatt mit Slicer und Druckwarteschlange in der Seitenleiste. Schalte das aus, wenn du nur die Dashboard-Karten nutzt."
         }
       }
     }

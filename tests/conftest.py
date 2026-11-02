@@ -21,7 +21,7 @@ PAYLOAD: dict[str, Any] = {
     "printers": [
         {
             "id": "a3c12bb1ca4ea642", "provider": "moonraker", "brand": "Klipper", "name": "Printsaurus",
-            "model": "Anycubic Kobra S1", "fw": "Rinkhals 20260716_02", "online": True, "state": "printing", "error": None,
+            "model": "Anycubic Kobra S1", "image": "https://cdn.example/kobra.png", "fw": "Rinkhals 20260716_02", "online": True, "state": "printing", "error": None,
             "nozzle": 220, "bed": 60,
             "job": {"title": "Benchy", "progress": 42, "remain_min": 37, "end_at": "2026-10-05T13:00:00Z", "layer": 80, "layers": 240},
             "slots": [

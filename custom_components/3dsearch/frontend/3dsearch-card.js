@@ -5,12 +5,19 @@
  *                                                                        slots in their real filament colours, buttons)
  *   type: custom:threedsearch-stock-card                                     (filament stock and spools that run low)
  *
+ * Small cards, one part of the printer card each (same options):
+ *   type: custom:threedsearch-job-card    device: <id>   (current print with the buttons)
+ *   type: custom:threedsearch-slots-card  device: <id>   (filament slots only)
+ *   type: custom:threedsearch-box-card    device: <id>   (ACE/AMS with drying only)
+ *
+ * Options of the printer card and the small cards: name: <text>, hide: [head, image, job, temps, slots, boxes, buttons]
+ *
  * Entities are found through the entity registry (platform "3dsearch" + translation key), so the cards work
  * whatever language Home Assistant used to name the entity ids. No external libraries, theme colours only.
  */
 (() => {
 "use strict";
-const VERSION = "0.5.0";
+const VERSION = "0.6.0";
 const DOMAIN = "3dsearch";
 
 const I18N = {
@@ -19,37 +26,43 @@ const I18N = {
         remaining: "Remaining", ends: "Ends", layer: "Layer", nozzle: "Nozzle", bed: "Bed", pause: "Pause", resume: "Resume", cancel: "Cancel",
         sure: "Really cancel?", slots: "Filament", noSpool: "no spool", stock: "Filament stock", spools: "spools", low: "Almost empty",
         noLow: "No spool is running low.", pick: "Printer", pickHint: "Add a printer in the 3DSEARCH integration first.", lastSeen: "last seen",
-        idle: "Idle", printing: "Printing", paused: "Paused", error: "Error", offline: "Offline", today: "today", tomorrow: "tomorrow" },
+        idle: "Idle", printing: "Printing", paused: "Paused", error: "Error", offline: "Offline", today: "today", tomorrow: "tomorrow",
+        noJob: "No print running.", noBox: "This printer has no filament box.", nothing: "Nothing selected.", show: "Show", cardName: "Name (optional)", secHead: "Name and status", secImage: "Printer picture", secJob: "Current print", secTemps: "Temperatures", secSlots: "Filament slots", secBoxes: "Filament box (ACE, AMS)", secButtons: "Pause, resume, cancel" },
   de: { dry: "Trocknen", dryStop: "Trocknen stoppen", drying: "Trocknet", left: "noch {t}", dryStart: "Trocknen starten", dryCancel: "Schließen", dTemp: "Temperatur", dHours: "Stunden", humidity: "Feuchte",
         all: "Alle anzeigen ({n})", less: "Weniger anzeigen", lowN: "{n} fast leer", inSlot: "Fach", noSpools: "Noch keine Spulen.",
         remaining: "Restzeit", ends: "Ende", layer: "Schicht", nozzle: "Düse", bed: "Bett", pause: "Pause", resume: "Fortsetzen", cancel: "Abbrechen",
         sure: "Wirklich abbrechen?", slots: "Filament", noSpool: "keine Spule", stock: "Filamentlager", spools: "Spulen", low: "Fast leer",
         noLow: "Keine Spule ist fast leer.", pick: "Drucker", pickHint: "Lege zuerst in der 3DSEARCH-Integration einen Drucker an.", lastSeen: "zuletzt",
-        idle: "Bereit", printing: "Druckt", paused: "Pausiert", error: "Fehler", offline: "Offline", today: "heute", tomorrow: "morgen" },
+        idle: "Bereit", printing: "Druckt", paused: "Pausiert", error: "Fehler", offline: "Offline", today: "heute", tomorrow: "morgen",
+        noJob: "Kein laufender Druck.", noBox: "Dieser Drucker hat keine Filamentbox.", nothing: "Nichts ausgewählt.", show: "Anzeigen", cardName: "Name (optional)", secHead: "Name und Status", secImage: "Druckerbild", secJob: "Aktueller Druck", secTemps: "Temperaturen", secSlots: "Filamentfächer", secBoxes: "Filamentbox (ACE, AMS)", secButtons: "Pause, Fortsetzen, Abbrechen" },
   fr: { dry: "Sécher", dryStop: "Arrêter le séchage", drying: "Séchage", left: "encore {t}", dryStart: "Lancer le séchage", dryCancel: "Fermer", dTemp: "Température", dHours: "Heures", humidity: "Humidité",
         all: "Tout afficher ({n})", less: "Afficher moins", lowN: "{n} presque vides", inSlot: "Empl.", noSpools: "Aucune bobine pour l’instant.",
         remaining: "Restant", ends: "Fin", layer: "Couche", nozzle: "Buse", bed: "Plateau", pause: "Pause", resume: "Reprendre", cancel: "Annuler",
         sure: "Vraiment annuler ?", slots: "Filament", noSpool: "pas de bobine", stock: "Stock de filament", spools: "bobines", low: "Presque vides",
         noLow: "Aucune bobine n’est presque vide.", pick: "Imprimante", pickHint: "Ajoutez d’abord une imprimante dans l’intégration 3DSEARCH.", lastSeen: "vue",
-        idle: "Prête", printing: "Impression", paused: "En pause", error: "Erreur", offline: "Hors ligne", today: "aujourd’hui", tomorrow: "demain" },
+        idle: "Prête", printing: "Impression", paused: "En pause", error: "Erreur", offline: "Hors ligne", today: "aujourd’hui", tomorrow: "demain",
+        noJob: "Aucune impression en cours.", noBox: "Cette imprimante n’a pas de boîtier à filament.", nothing: "Rien de sélectionné.", show: "Afficher", cardName: "Nom (facultatif)", secHead: "Nom et état", secImage: "Image de l’imprimante", secJob: "Impression en cours", secTemps: "Températures", secSlots: "Emplacements de filament", secBoxes: "Boîtier à filament (ACE, AMS)", secButtons: "Pause, reprise, annulation" },
   es: { dry: "Secar", dryStop: "Detener secado", drying: "Secando", left: "faltan {t}", dryStart: "Iniciar secado", dryCancel: "Cerrar", dTemp: "Temperatura", dHours: "Horas", humidity: "Humedad",
         all: "Mostrar todas ({n})", less: "Mostrar menos", lowN: "{n} casi vacías", inSlot: "Ranura", noSpools: "Todavía no hay bobinas.",
         remaining: "Restante", ends: "Fin", layer: "Capa", nozzle: "Boquilla", bed: "Cama", pause: "Pausa", resume: "Reanudar", cancel: "Cancelar",
         sure: "¿Cancelar de verdad?", slots: "Filamento", noSpool: "sin bobina", stock: "Stock de filamento", spools: "bobinas", low: "Casi vacías",
         noLow: "Ninguna bobina está casi vacía.", pick: "Impresora", pickHint: "Añade primero una impresora en la integración 3DSEARCH.", lastSeen: "vista",
-        idle: "Lista", printing: "Imprimiendo", paused: "En pausa", error: "Error", offline: "Sin conexión", today: "hoy", tomorrow: "mañana" },
+        idle: "Lista", printing: "Imprimiendo", paused: "En pausa", error: "Error", offline: "Sin conexión", today: "hoy", tomorrow: "mañana",
+        noJob: "Ninguna impresión en curso.", noBox: "Esta impresora no tiene caja de filamento.", nothing: "Nada seleccionado.", show: "Mostrar", cardName: "Nombre (opcional)", secHead: "Nombre y estado", secImage: "Imagen de la impresora", secJob: "Impresión actual", secTemps: "Temperaturas", secSlots: "Ranuras de filamento", secBoxes: "Caja de filamento (ACE, AMS)", secButtons: "Pausa, reanudar, cancelar" },
   it: { dry: "Essiccare", dryStop: "Ferma essiccazione", drying: "In essiccazione", left: "ancora {t}", dryStart: "Avvia essiccazione", dryCancel: "Chiudi", dTemp: "Temperatura", dHours: "Ore", humidity: "Umidità",
         all: "Mostra tutte ({n})", less: "Mostra meno", lowN: "{n} quasi vuote", inSlot: "Slot", noSpools: "Ancora nessuna bobina.",
         remaining: "Rimanente", ends: "Fine", layer: "Strato", nozzle: "Ugello", bed: "Piatto", pause: "Pausa", resume: "Riprendi", cancel: "Annulla",
         sure: "Annullare davvero?", slots: "Filamento", noSpool: "nessuna bobina", stock: "Scorte di filamento", spools: "bobine", low: "Quasi vuote",
         noLow: "Nessuna bobina è quasi vuota.", pick: "Stampante", pickHint: "Aggiungi prima una stampante nell’integrazione 3DSEARCH.", lastSeen: "vista",
-        idle: "Pronta", printing: "In stampa", paused: "In pausa", error: "Errore", offline: "Offline", today: "oggi", tomorrow: "domani" },
+        idle: "Pronta", printing: "In stampa", paused: "In pausa", error: "Errore", offline: "Offline", today: "oggi", tomorrow: "domani",
+        noJob: "Nessuna stampa in corso.", noBox: "Questa stampante non ha un box filamento.", nothing: "Nulla di selezionato.", show: "Mostra", cardName: "Nome (facoltativo)", secHead: "Nome e stato", secImage: "Immagine della stampante", secJob: "Stampa in corso", secTemps: "Temperature", secSlots: "Slot filamento", secBoxes: "Box filamento (ACE, AMS)", secButtons: "Pausa, riprendi, annulla" },
   nl: { dry: "Drogen", dryStop: "Drogen stoppen", drying: "Droogt", left: "nog {t}", dryStart: "Drogen starten", dryCancel: "Sluiten", dTemp: "Temperatuur", dHours: "Uren", humidity: "Vocht",
         all: "Alles tonen ({n})", less: "Minder tonen", lowN: "{n} bijna leeg", inSlot: "Sleuf", noSpools: "Nog geen spoelen.",
         remaining: "Resterend", ends: "Einde", layer: "Laag", nozzle: "Nozzle", bed: "Bed", pause: "Pauze", resume: "Hervatten", cancel: "Annuleren",
         sure: "Echt annuleren?", slots: "Filament", noSpool: "geen spoel", stock: "Filamentvoorraad", spools: "spoelen", low: "Bijna leeg",
         noLow: "Geen spoel is bijna leeg.", pick: "Printer", pickHint: "Voeg eerst een printer toe in de 3DSEARCH-integratie.", lastSeen: "gezien",
-        idle: "Gereed", printing: "Print", paused: "Gepauzeerd", error: "Fout", offline: "Offline", today: "vandaag", tomorrow: "morgen" },
+        idle: "Gereed", printing: "Print", paused: "Gepauzeerd", error: "Fout", offline: "Offline", today: "vandaag", tomorrow: "morgen",
+        noJob: "Geen print bezig.", noBox: "Deze printer heeft geen filamentbox.", nothing: "Niets geselecteerd.", show: "Tonen", cardName: "Naam (optioneel)", secHead: "Naam en status", secImage: "Printerafbeelding", secJob: "Huidige print", secTemps: "Temperaturen", secSlots: "Filamentsleuven", secBoxes: "Filamentbox (ACE, AMS)", secButtons: "Pauze, hervatten, annuleren" },
 };
 
 const ICONS = {
@@ -80,6 +93,54 @@ function spoolSvg(color, percent, size) {
   return `<svg class="spool" viewBox="0 0 40 40" width="${size}" height="${size}" aria-hidden="true"><circle cx="20" cy="20" r="19.5" fill="#5b6370"/>
     <circle cx="20" cy="20" r="${full}" fill="#c7ccd4"/>${p > 0 ? `<circle cx="20" cy="20" r="${r.toFixed(1)}" fill="${c}"/>${lines}` : ""}
     <circle cx="20" cy="20" r="${hub}" fill="#5b6370"/><circle cx="20" cy="20" r="3.2" fill="#eef0f3"/></svg>`;
+}
+
+// Drawn printer for printers without a photo or a cloud picture (Bambu, Klipper, Prusa …), same drawing as the 3DSEARCH workshop:
+// closed box (the bed moves down) or open frame (the gantry moves up). While printing the head moves and the part grows with the
+// real progress in the colour of the active slot; 0 % = heating (nozzle glows), paused = still, offline = grey.
+const PA_OPEN = /\b(A[12](?:\s?mini|L)?|Kobra\s?(?:2|3|4|Neo)\b|Ender|MK[34]S?|MINI\+?|Neptune|Sidewinder|Genius|Hornet|i3)\b/i;
+let paSeq = 0;
+function printerArt(model, o = {}) {
+  const u = "pa" + (++paSeq), open = PA_OPEN.test(model || "");
+  const run = !!o.busy && !o.off, p = run ? Math.max(0, Math.min(100, +o.p || 0)) / 100 : 0;
+  const col = hex(o.color) || "var(--primary-color, #03a9f4)";
+  const heat = run && p === 0 && !o.paused;
+  const h = run ? Math.max(p * (open ? 42 : 32), p > 0 ? 1.2 : 0) : 0;
+  const cls = ["pa", run ? "run" : "", o.paused ? "paused" : "", heat ? "heat" : "", o.off ? "off" : ""].filter(Boolean).join(" ");
+  // Phase from the clock: the card redraws on every state change, the head must not jump back to the start
+  const dl = run ? ` style="animation-delay:-${((Date.now() / 1000) % 3.2).toFixed(2)}s"` : "";
+  const ol = ' stroke="#8f97a2" stroke-width=".7"';
+  const obj = (x, y) => (h > 0 ? `<rect x="${x}" y="${y}" width="26" height="${h.toFixed(2)}" rx="1" fill="${col}"/><rect x="${x}" y="${y}" width="26" height="${h.toFixed(2)}" rx="1" fill="url(#${u}s)"/>` : "");
+  const head = (tip) => `<g class="pa-head"${dl}><rect x="51" y="${tip - 15}" width="18" height="12" rx="2.6" fill="#eceff3"${ol}/>
+    <rect x="54.5" y="${tip - 12}" width="11" height="2" rx="1" fill="#a3abb6"/><rect x="54.5" y="${tip - 8.5}" width="4" height="2" rx="1" fill="${col}"/>
+    <path class="pa-noz" d="M57 ${tip - 3}h6l-1.6 3h-2.8z" fill="#c79c45"/>${run && p > 0 ? `<rect x="55" y="${tip - 0.2}" width="10" height="1.6" rx=".8" fill="${col}"/>` : ""}</g>`;
+  const defs = `<defs><linearGradient id="${u}f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9ced6"/><stop offset="1" stop-color="#8b939e"/></linearGradient>
+    <linearGradient id="${u}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b323c"/><stop offset="1" stop-color="#161b22"/></linearGradient>
+    <linearGradient id="${u}a" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d7dbe1"/><stop offset=".5" stop-color="#f1f3f6"/><stop offset="1" stop-color="#a6adb7"/></linearGradient>
+    <pattern id="${u}s" width="4" height="2.2" patternUnits="userSpaceOnUse"><rect y="1.5" width="4" height=".7" fill="#000" opacity=".16"/></pattern></defs>`;
+  let body;
+  if (!open) {
+    const tip = 47, bed = run ? tip + h : tip + 30;
+    body = `<rect x="22" y="110" width="12" height="4.5" rx="1.6" fill="#2a2f37"/><rect x="86" y="110" width="12" height="4.5" rx="1.6" fill="#2a2f37"/>
+      <rect x="14" y="7" width="92" height="105" rx="9" fill="url(#${u}f)" stroke="#7b838e" stroke-width=".8"/>
+      <rect x="22" y="18" width="76" height="86" rx="4" fill="url(#${u}g)"/><rect x="24" y="19.5" width="72" height="1.4" rx=".7" fill="#fff" opacity=".45"/>
+      <path d="M31 21v81M89 21v81" stroke="#3b434e" stroke-width="2"/><rect x="25" y="${tip - 12}" width="70" height="3" rx="1.5" fill="#58616d"/>
+      <rect x="32" y="${bed}" width="56" height="2.6" fill="#b8914f"/><rect x="32" y="${bed + 2.6}" width="56" height="3" fill="#434b57"/><rect x="28" y="${bed + 3.6}" width="64" height="2" rx="1" fill="#2f3640"/>
+      ${obj(47, tip)}${head(tip)}
+      <path d="M22 18h34L22 66z" fill="#fff" opacity=".07"/><path d="M64 18h10L22 92v-14z" fill="#fff" opacity=".04"/>
+      <rect x="100.2" y="50" width="2.2" height="22" rx="1.1" fill="#6f7782"/><rect x="72" y="9.5" width="22" height="6" rx="1.5" fill="#161b22"/><rect x="74" y="11" width="7" height="3" rx=".6" fill="${col}" opacity=".9"/>`;
+  } else {
+    const tip = 86, lift = run ? h : 30;
+    body = `<rect x="16" y="108" width="12" height="4" rx="1.5" fill="#2a2f37"/><rect x="92" y="108" width="12" height="4" rx="1.5" fill="#2a2f37"/>
+      <rect x="12" y="95" width="96" height="14" rx="3" fill="#2a2f37" stroke="#4b535e" stroke-width=".7"/><rect x="12" y="95" width="96" height="1.3" fill="#fff" opacity=".14"/>
+      <rect x="87" y="98.5" width="16" height="7.5" rx="1.5" fill="#0f1318"/><rect x="89" y="100" width="6" height="4.5" rx=".6" fill="${col}" opacity=".9"/>
+      <rect x="18" y="16" width="7" height="80" fill="url(#${u}a)"${ol}/><rect x="95" y="16" width="7" height="80" fill="url(#${u}a)"${ol}/><rect x="18" y="10" width="84" height="7" rx="2" fill="url(#${u}a)"${ol}/>
+      <rect x="26" y="${tip}" width="68" height="2.6" fill="#b8914f"/><rect x="26" y="${tip + 2.6}" width="68" height="2.6" fill="#4a525e"/><rect x="30" y="${tip + 5.2}" width="60" height="4" fill="#3a414b"/>
+      ${obj(47, tip - h)}
+      <g transform="translate(0 ${(-lift).toFixed(2)})"><rect x="16" y="${tip - 13}" width="11" height="11" rx="1.5" fill="#5a626e"/><rect x="93" y="${tip - 13}" width="11" height="11" rx="1.5" fill="#5a626e"/>
+        <rect x="25" y="${tip - 10}" width="70" height="4" rx="1.5" fill="#3f4651"/>${head(tip)}</g>`;
+  }
+  return `<svg class="${cls}" viewBox="0 0 120 120" aria-hidden="true">${defs}${body}</svg>`;
 }
 
 function lang(hass) {
@@ -164,9 +225,18 @@ const BASE_CSS = `
   .spool.none { box-sizing: border-box; border-radius: 50%; border: 2px dashed var(--divider-color, rgba(127,127,127,.4)); }
 `;
 
+// Parts of the printer card, in order. `hide` in the card config leaves them out.
+const SECTIONS = [["head", "secHead"], ["image", "secImage"], ["job", "secJob"], ["temps", "secTemps"], ["slots", "secSlots"], ["boxes", "secBoxes"], ["buttons", "secButtons"]];
+
 // ── Printer card ─────────────────────────────────────────────────────────────
 class ThreeDSearchPrinterCard extends HTMLElement {
-  static getConfigElement() { return document.createElement("threedsearch-printer-card-editor"); }
+  static ONLY = null;   // the small cards below limit themselves to these parts
+
+  static getConfigElement() {
+    const editor = document.createElement("threedsearch-printer-card-editor");
+    editor.only = this.ONLY;
+    return editor;
+  }
 
   static getStubConfig(hass) {
     const first = printerDevices(hass)[0];
@@ -174,7 +244,7 @@ class ThreeDSearchPrinterCard extends HTMLElement {
   }
 
   setConfig(config) {
-    if (!config) throw new Error("Invalid configuration");
+    if (!config || (config.hide !== undefined && !Array.isArray(config.hide))) throw new Error("Invalid configuration");
     this._config = { ...config };
     this._sig = null;
     if (this._hass) this._render();
@@ -199,6 +269,11 @@ class ThreeDSearchPrinterCard extends HTMLElement {
 
   _st(key) { const id = this._ents?.[key]; return id ? this._hass.states[id] : undefined; }
 
+  _on(part) {
+    const only = this.constructor.ONLY;
+    return (!only || only.includes(part)) && !(this._config.hide || []).includes(part);
+  }
+
   _render() {
     if (!this._hass || !this._config) return;
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
@@ -217,8 +292,9 @@ class ThreeDSearchPrinterCard extends HTMLElement {
     const sub = [dev.model, dev.manufacturer].filter(Boolean).join(" · ");
     const active = state === "printing" || state === "paused";
 
+    const solo = !!this.constructor.ONLY;
     let job = "";
-    if (active) {
+    if (active && this._on("job")) {
       const pr = this._st("progress"), rt = this._st("remaining_time"), en = this._st("end_time"), jn = this._st("job_name"), ly = this._st("current_layer");
       const pct = usable(pr) ? Math.max(0, Math.min(100, +pr.state)) : 0;
       const r = 34, c = 2 * Math.PI * r;
@@ -233,13 +309,15 @@ class ThreeDSearchPrinterCard extends HTMLElement {
           <span>${pct}<small>%</small></span></div>
         <div class="jt"><div class="jname" data-more="job_name">${esc(usable(jn) ? jn.state : "")}</div><div class="facts">${facts.join("")}</div></div>
       </div>`;
+    } else if (solo && this._on("job")) {
+      job = `<div class="muted sec">${esc(t.noJob)}</div>`;
     }
 
-    const temps = [["nozzle_temperature", ICONS.nozzle, t.nozzle], ["bed_temperature", ICONS.bed, t.bed]]
+    const temps = !this._on("temps") ? "" : [["nozzle_temperature", ICONS.nozzle, t.nozzle], ["bed_temperature", ICONS.bed, t.bed]]
       .map(([k, ic, lb]) => { const s = this._st(k); return usable(s) ? `<button class="chip" data-more="${k}" title="${esc(lb)}">${svg(ic, 16)}<span>${esc(lb)}</span><b>${esc(fmtNum(s.state, hass))} ${esc(s.attributes.unit_of_measurement || "")}</b></button>` : ""; })
       .join("");
 
-    const slots = (this._ents.slots || []).map((id) => {
+    const slots = !this._on("slots") ? "" : (this._ents.slots || []).map((id) => {
       const s = hass.states[id];
       if (!s || s.state === "unavailable") return "";
       const a = s.attributes, col = hex(a.color);
@@ -260,25 +338,45 @@ class ThreeDSearchPrinterCard extends HTMLElement {
       const ok = s.state !== "unavailable";   // pause only while printing, resume only while paused …
       return `<button class="act ${cls}" data-press="${key}"${ok ? "" : " disabled"}>${svg(icon, 16)}<span>${esc(this._confirm === key ? t.sure : text)}</span></button>`;
     };
-    const actions = btn("pause", ICONS.pause, t.pause) + btn("resume", ICONS.play, t.resume) + btn("cancel", ICONS.stop, t.cancel, "danger");
+    const actions = !this._on("buttons") ? "" : btn("pause", ICONS.pause, t.pause) + btn("resume", ICONS.play, t.resume) + btn("cancel", ICONS.stop, t.cancel, "danger");
 
-    const err = state === "error" && st.attributes.error ? `<div class="err sec">${esc(st.attributes.error)}</div>` : "";
-    const seen = state === "offline" && st.attributes.last_update
+    const info = this._on("head") || this._on("job");   // an error or "last seen" belongs with the printer's state
+    const err = info && state === "error" && st.attributes.error ? `<div class="err sec">${esc(st.attributes.error)}</div>` : "";
+    const seen = info && state === "offline" && st.attributes.last_update
       ? `<div class="muted sec">${esc(t.lastSeen)} ${esc(new Date(st.attributes.last_update).toLocaleString(hass.locale?.language || "en", { dateStyle: "short", timeStyle: "short" }))}</div>` : "";
 
-    this.shadowRoot.innerHTML = `<style>${BASE_CSS}${PRINTER_CSS}</style>
-      <ha-card style="--state-color:${color}" class="${state === "offline" ? "off" : ""}">
-        <div class="head">
-          <span class="ico">${svg(ICONS.printer, 22)}</span>
-          <div class="tt" data-more="status"><div class="name">${esc(this._config.name || deviceName(hass, this._config.device))}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ""}</div>
+    const title = esc(this._config.name || deviceName(hass, this._config.device));
+    // Picture order as in the workshop: own photo, cloud picture, drawing. The drawing stays behind the photo and shows when it fails.
+    // referrerpolicy: Home Assistant sends no referrer, and 3dsearch.net challenges such requests (same reason as the sidebar frame).
+    let pic = `<span class="ico">${svg(ICONS.printer, 22)}</span>`;
+    if (this._on("image")) {
+      const src = /^https:\/\//i.test(st?.attributes.image || "") ? st.attributes.image : "";
+      const pr = this._st("progress");
+      const running = (this._ents.slots || []).map((id) => hass.states[id]?.attributes).find((a) => a?.in_use);
+      pic = `<span class="pic">${src ? `<img class="${st.attributes.image_own ? "own" : ""}" src="${esc(src)}" alt="" loading="lazy" referrerpolicy="origin" onerror="this.remove()">` : ""}
+        <span class="art">${printerArt(dev.model || dev.name, { busy: active, paused: state === "paused", off: state === "offline", p: usable(pr) ? +pr.state : 0, color: running?.color })}</span></span>`;
+    }
+    const head = !this._on("head") ? "" : `<div class="head">
+          ${pic}
+          <div class="tt" data-more="status"><div class="name">${title}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ""}</div>
           <span class="pill" data-more="status"><i></i>${esc(label)}</span>
-        </div>
-        ${err}${job}
-        ${temps ? `<div class="chips sec">${temps}</div>` : ""}
-        ${slots ? `<div class="sec"><div class="lbl">${esc(t.slots)}</div><div class="slots">${slots}</div></div>` : ""}
-        ${this._boxesHtml(t)}
-        ${actions ? `<div class="acts sec">${actions}</div>` : ""}
-        ${seen}
+        </div>`;
+    const boxes = !this._on("boxes") ? "" : this._boxesHtml(t) || (solo ? `<div class="muted sec">${esc(t.noBox)}</div>` : "");
+    const body = [
+      head,
+      // Small cards without the head still say which printer they belong to
+      solo && !head ? `<div class="lbl">${title}</div>` : "",
+      err, job,
+      temps ? `<div class="chips sec">${temps}</div>` : "",
+      slots ? `<div class="sec">${solo ? "" : `<div class="lbl">${esc(t.slots)}</div>`}<div class="slots">${slots}</div></div>` : "",
+      boxes,
+      actions ? `<div class="acts sec">${actions}</div>` : "",
+      seen,
+    ].join("");
+
+    this.shadowRoot.innerHTML = `<style>${BASE_CSS}${PRINTER_CSS}</style>
+      <ha-card style="--state-color:${color}" class="${[state === "offline" ? "off" : "", solo ? "solo" : ""].join(" ").trim()}">
+        ${body || `<div class="muted">${esc(t.nothing)}</div>`}
       </ha-card>`;
 
     this.shadowRoot.querySelectorAll("[data-more]").forEach((el) => el.addEventListener("click", () => moreInfo(this, this._ents[el.dataset.more])));
@@ -366,7 +464,43 @@ class ThreeDSearchPrinterCard extends HTMLElement {
   }
 }
 
+// ── Small cards: one part of the printer card each ───────────────────────────
+class ThreeDSearchJobCard extends ThreeDSearchPrinterCard {
+  static ONLY = ["head", "image", "job", "buttons"];
+  getCardSize() { return 3; }
+  getGridOptions() { return { columns: 6, min_columns: 6, rows: "auto" }; }
+}
+
+class ThreeDSearchSlotsCard extends ThreeDSearchPrinterCard {
+  static ONLY = ["slots"];
+  getCardSize() { return 2; }
+  getGridOptions() { return { columns: 6, min_columns: 3, rows: "auto" }; }
+}
+
+class ThreeDSearchBoxCard extends ThreeDSearchPrinterCard {
+  static ONLY = ["boxes"];
+  getCardSize() { return 2; }
+  getGridOptions() { return { columns: 6, min_columns: 4, rows: "auto" }; }
+}
+
 const PRINTER_CSS = `
+  .pic { position: relative; width: 64px; height: 64px; flex: none; border-radius: 12px; overflow: hidden; display: block;
+         background: var(--secondary-background-color, rgba(127,127,127,.1)); }
+  .pic img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  .pic img.own { object-fit: cover; }
+  .pic img + .art { display: none; }
+  .art { display: block; width: 100%; height: 100%; padding: 5px; box-sizing: border-box; }
+  .pa { display: block; width: 100%; height: 100%; overflow: visible; }
+  .pa.run .pa-head { animation: pa-x 1.6s ease-in-out infinite alternate; }
+  @keyframes pa-x { from { transform: translateX(-10px); } to { transform: translateX(10px); } }
+  .pa.paused .pa-head, .pa.heat .pa-head { animation-play-state: paused; }
+  .pa.heat .pa-noz { animation: pa-glow 1.1s ease-in-out infinite alternate; }
+  @keyframes pa-glow { to { fill: #ff5a1f; } }
+  .pa.off { filter: grayscale(1); opacity: .5; }
+  @media (prefers-reduced-motion: reduce) { .pa .pa-head, .pa .pa-noz { animation: none; } }
+  ha-card > .sec:first-child { margin-top: 0; }
+  ha-card.solo > .lbl + .sec { margin-top: 0; }
+  ha-card.solo .box { border: 0; padding: 0; }
   ha-card.off .sec:not(.muted) { opacity: .55; }
   .job { display: flex; align-items: center; gap: 16px; }
   .ring { position: relative; width: 80px; height: 80px; flex: none; cursor: pointer; }
@@ -531,7 +665,7 @@ const STOCK_CSS = `
           border: 1px solid var(--divider-color, rgba(127,127,127,.3)); background: none; color: var(--primary-color, #03a9f4); }
 `;
 
-// ── Editor: pick the printer (plain <select>, no internal HA components needed) ──
+// ── Editor: printer, name and which parts to show (plain controls, no internal HA components needed) ──
 class ThreeDSearchPrinterCardEditor extends HTMLElement {
   setConfig(config) { this._config = { ...config }; this._render(); }
   set hass(hass) { const first = !this._hass; this._hass = hass; if (first) this._render(); }
@@ -540,24 +674,44 @@ class ThreeDSearchPrinterCardEditor extends HTMLElement {
     if (!this._hass || !this._config) return;
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
     const t = I18N[lang(this._hass)], devs = printerDevices(this._hass);
+    const parts = SECTIONS.filter(([k]) => !this.only || this.only.includes(k));
+    const hide = this._config.hide || [];
     this.shadowRoot.innerHTML = `<style>
+        :host { display: grid; gap: 14px; }
         label { display: grid; gap: 6px; font-size: 14px; color: var(--primary-text-color); }
-        select { font: inherit; padding: 10px; border-radius: 8px; border: 1px solid var(--divider-color, #ccc);
+        select, input[type=text] { font: inherit; padding: 10px; border-radius: 8px; border: 1px solid var(--divider-color, #ccc);
                  background: var(--card-background-color, #fff); color: var(--primary-text-color); }
-        p { color: var(--secondary-text-color); font-size: 13px; }
+        p { color: var(--secondary-text-color); font-size: 13px; margin: 0; }
+        fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; }
+        legend { font-size: 14px; color: var(--primary-text-color); padding: 0 0 6px; }
+        label.chk { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        label.chk input { width: 18px; height: 18px; margin: 0; accent-color: var(--primary-color, #03a9f4); }
       </style>
-      ${devs.length ? `<label>${esc(t.pick)}<select>${devs.map((d) => `<option value="${esc(d.id)}"${d.id === this._config.device ? " selected" : ""}>${esc(d.name)}</option>`).join("")}</select></label>`
+      ${devs.length ? `<label>${esc(t.pick)}<select>${devs.map((d) => `<option value="${esc(d.id)}"${d.id === this._config.device ? " selected" : ""}>${esc(d.name)}</option>`).join("")}</select></label>
+        <label>${esc(t.cardName)}<input type="text" value="${esc(this._config.name || "")}"></label>
+        ${parts.length > 1 ? `<fieldset><legend>${esc(t.show)}</legend>${parts.map(([k, lb]) => `<label class="chk"><input type="checkbox" data-part="${k}"${hide.includes(k) ? "" : " checked"}>${esc(t[lb])}</label>`).join("")}</fieldset>` : ""}`
                     : `<p>${esc(t.pickHint)}</p>`}`;
     const sel = this.shadowRoot.querySelector("select");
     if (sel) {
-      if (!this._config.device && devs[0]) this._changed(devs[0].id);
-      sel.addEventListener("change", () => this._changed(sel.value));
+      if (!this._config.device && devs[0]) this._set({ device: devs[0].id });
+      sel.addEventListener("change", () => this._set({ device: sel.value }));
     }
+    // "change", not "input": Home Assistant answers with setConfig, a redraw on every key would take the focus away
+    const name = this.shadowRoot.querySelector("input[type=text]");
+    if (name) name.addEventListener("change", () => this._set({ name: name.value.trim() }));
+    this.shadowRoot.querySelectorAll("[data-part]").forEach((el) => el.addEventListener("change", () => {
+      const off = new Set(this._config.hide || []);
+      if (el.checked) off.delete(el.dataset.part); else off.add(el.dataset.part);
+      this._set({ hide: SECTIONS.map(([k]) => k).filter((k) => off.has(k)) });
+    }));
   }
 
-  _changed(device) {
-    this._config = { ...this._config, device };
-    this.dispatchEvent(new CustomEvent("config-changed", { detail: { config: this._config }, bubbles: true, composed: true }));
+  _set(patch) {
+    const config = { ...this._config, ...patch };
+    if (!config.name) delete config.name;           // an unused option stays out of the YAML
+    if (!config.hide || !config.hide.length) delete config.hide;
+    this._config = config;
+    this.dispatchEvent(new CustomEvent("config-changed", { detail: { config }, bubbles: true, composed: true }));
   }
 }
 
@@ -566,7 +720,8 @@ class ThreeDSearchPrinterCardEditor extends HTMLElement {
 // Home Assistant ("Custom element doesn't exist", now and then, after any reload). So wait for <home-assistant>.
 const define = () => {
   for (const [tag, cls] of [["threedsearch-printer-card", ThreeDSearchPrinterCard], ["threedsearch-stock-card", ThreeDSearchStockCard],
-                            ["threedsearch-printer-card-editor", ThreeDSearchPrinterCardEditor]]) {
+                            ["threedsearch-job-card", ThreeDSearchJobCard], ["threedsearch-slots-card", ThreeDSearchSlotsCard],
+                            ["threedsearch-box-card", ThreeDSearchBoxCard], ["threedsearch-printer-card-editor", ThreeDSearchPrinterCardEditor]]) {
     if (!window.customElements.get(tag)) window.customElements.define(tag, cls);
   }
 };
@@ -576,6 +731,9 @@ window.customCards = window.customCards || [];
 for (const c of [
   { type: "threedsearch-printer-card", name: "3DSEARCH printer", description: "Printer state, progress, temperatures and filament slots in their real colours.", preview: true, documentationURL: "https://github.com/nolimitek/ha-3dsearch" },
   { type: "threedsearch-stock-card", name: "3DSEARCH filament stock", description: "All spools with colour and remaining filament; almost empty ones first.", preview: true, documentationURL: "https://github.com/nolimitek/ha-3dsearch" },
+  { type: "threedsearch-job-card", name: "3DSEARCH current print", description: "The running print with progress, remaining time and buttons.", preview: true, documentationURL: "https://github.com/nolimitek/ha-3dsearch" },
+  { type: "threedsearch-slots-card", name: "3DSEARCH filament slots", description: "Only the filament slots of one printer, in their real colours.", preview: true, documentationURL: "https://github.com/nolimitek/ha-3dsearch" },
+  { type: "threedsearch-box-card", name: "3DSEARCH filament box", description: "ACE or AMS with climate and, for ACE, drying.", preview: true, documentationURL: "https://github.com/nolimitek/ha-3dsearch" },
 ]) if (!window.customCards.some((x) => x.type === c.type)) window.customCards.push(c);
 console.info(`%c 3DSEARCH cards %c ${VERSION} `, "background:#ff7a1a;color:#fff;font-weight:700;border-radius:3px 0 0 3px", "background:#333;color:#fff;border-radius:0 3px 3px 0");
 })();

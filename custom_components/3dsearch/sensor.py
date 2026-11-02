@@ -163,7 +163,8 @@ class PrinterSensor(PrinterEntity, SensorEntity):
         key = self.entity_description.key
         if key == "status":
             return {"error": self.printer.get("error"), "provider": self.printer.get("provider"),
-                    "last_update": self.printer.get("updated")}
+                    "last_update": self.printer.get("updated"), "image": self.printer.get("image"),
+                    "image_own": bool(self.printer.get("image_own"))}
         if key == "current_layer":
             return {"total_layers": self.job.get("layers")}
         return None

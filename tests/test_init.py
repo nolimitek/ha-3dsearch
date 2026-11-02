@@ -31,6 +31,8 @@ async def test_entities(hass: HomeAssistant, aioclient_mock, payload) -> None:
     assert entry.state is ConfigEntryState.LOADED
 
     assert hass.states.get("sensor.printsaurus_status").state == "printing"
+    assert hass.states.get("sensor.printsaurus_status").attributes["image"] == "https://cdn.example/kobra.png"
+    assert hass.states.get("sensor.printsaurus_status").attributes["image_own"] is False
     assert hass.states.get("sensor.printsaurus_progress").state == "42"
     assert hass.states.get("sensor.printsaurus_remaining_time").state == "37"
     assert hass.states.get("sensor.printsaurus_estimated_end").state == "2026-10-05T13:00:00+00:00"

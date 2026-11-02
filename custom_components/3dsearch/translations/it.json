@@ -38,10 +38,12 @@
       "init": {
         "title": "Opzioni",
         "data": {
-          "scan_interval": "Intervallo di aggiornamento"
+          "scan_interval": "Intervallo di aggiornamento",
+          "show_panel": "Mostra 3DSearch nella barra laterale"
         },
         "data_description": {
-          "scan_interval": "Ogni quanto Home Assistant interroga 3dsearch.net (secondi). I cloud delle stampanti vengono sincronizzati al massimo una volta al minuto."
+          "scan_interval": "Ogni quanto Home Assistant interroga 3dsearch.net (secondi). I cloud delle stampanti vengono sincronizzati al massimo una volta al minuto.",
+          "show_panel": "Aggiunge l’intero laboratorio con slicer e coda di stampa alla barra laterale. Disattivalo se usi solo le schede della dashboard."
         }
       }
     }

@@ -80,3 +80,37 @@ async def test_embed_refused_by_server(hass: HomeAssistant, aioclient_mock, payl
     await client.send_json_auto_id({"type": "3dsearch/embed", "entry_id": entry.entry_id})
     res = await client.receive_json()
     assert not res["success"] and res["error"] == {"code": "embed_failed", "message": "not_allowed"}
+
+
+async def test_panel_can_be_turned_off(hass: HomeAssistant, aioclient_mock, payload) -> None:
+    """The option removes the sidebar entry at once and brings it back, without a restart."""
+    hass.config.components.add("frontend")
+    payload["features"] = {"panel": True}
+    with (patch("homeassistant.components.panel_custom.async_register_panel", new=AsyncMock()) as reg,
+          patch("homeassistant.components.frontend.async_remove_panel") as rem):
+        entry = await _setup(hass, aioclient_mock, payload)
+        reg.assert_called_once()
+
+        flow = await hass.config_entries.options.async_init(entry.entry_id)
+        await hass.config_entries.options.async_configure(flow["flow_id"], {"scan_interval": 60, "show_panel": False})
+        await hass.async_block_till_done()
+        rem.assert_called_once()
+        reg.assert_called_once()   # the reload did not add it again
+        assert entry.options["show_panel"] is False
+
+        flow = await hass.config_entries.options.async_init(entry.entry_id)
+        await hass.config_entries.options.async_configure(flow["flow_id"], {"scan_interval": 60, "show_panel": True})
+        await hass.async_block_till_done()
+        assert reg.call_count == 2
+
+
+async def test_panel_stays_off_after_restart(hass: HomeAssistant, aioclient_mock, payload) -> None:
+    hass.config.components.add("frontend")
+    payload["features"] = {"panel": True}
+    entry = MockConfigEntry(domain=DOMAIN, unique_id="1", data={"api_key": KEY}, options={"show_panel": False})
+    entry.add_to_hass(hass)
+    aioclient_mock.get(API_URL, json=payload)
+    with patch("homeassistant.components.panel_custom.async_register_panel", new=AsyncMock()) as reg:
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+        assert not reg.called

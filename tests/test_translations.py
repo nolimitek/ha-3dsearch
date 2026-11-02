@@ -32,7 +32,8 @@ def test_card_file() -> None:
 
     js = (BASE / "frontend" / "3dsearch-card.js").read_text(encoding="utf-8")
     tags = re.findall(r'\["([a-z0-9-]+)", ThreeDSearch', js)
-    assert set(tags) == {"threedsearch-printer-card", "threedsearch-stock-card", "threedsearch-printer-card-editor"}
+    assert set(tags) == {"threedsearch-printer-card", "threedsearch-stock-card", "threedsearch-printer-card-editor",
+                         "threedsearch-job-card", "threedsearch-slots-card", "threedsearch-box-card"}
     assert all(re.match(r"^[a-z][a-z0-9]*-[a-z0-9-]+$", t) for t in tags)
     manifest = (BASE / "manifest.json").read_text(encoding="utf-8")
     assert f'const VERSION = "{__import__("json").loads(manifest)["version"]}"' in js

@@ -32,7 +32,7 @@ The print event is based on the job history of 3dsearch.net, so a print that end
 
 ## Dashboard cards
 
-The integration brings two cards along — no extra download, they appear in the card picker after the restart:
+The integration brings five cards along — no extra download, they appear in the card picker after the restart:
 
 <img src="https://raw.githubusercontent.com/nolimitek/ha-3dsearch/main/docs/images/printer-card.png" alt="3DSEARCH printer card" width="420">
 
@@ -42,6 +42,27 @@ device: <printer device>   # pick it in the visual editor
 ```
 
 State, progress ring with remaining time and end, temperatures, the filament slots **in their real colours** with remaining grams, pause/resume/cancel (cancel needs a second tap), and one block per ACE/AMS with temperature, humidity and drying — start drying with presets (PLA 45 °C/4 h, TPU 50 °C/6 h, PETG 55 °C/6 h, ABS/ASA 55 °C/8 h) or your own values.
+
+**Build your own layout:** in the visual editor you can switch every part of the printer card on or off. In YAML it looks like this (leave `hide` out to show everything):
+
+```yaml
+type: custom:threedsearch-printer-card
+device: <printer device>
+name: Workshop            # optional
+hide: [temps, boxes]      # any of: head, image, job, temps, slots, boxes, buttons
+```
+
+Three small cards show a single part and fit next to each other:
+
+| Card | Shows |
+|---|---|
+| `custom:threedsearch-job-card` | the running print with progress, remaining time and buttons |
+| `custom:threedsearch-slots-card` | only the filament slots |
+| `custom:threedsearch-box-card` | ACE or AMS with climate and, for ACE, drying |
+
+They take the same `device` and `name` options. The print card also takes `hide: [head, image, buttons]`.
+
+The printer picture is your own photo from 3dsearch.net, otherwise the picture from the manufacturer's cloud. Printers without either (Bambu, Klipper, Prusa) get a drawing that moves while they print.
 
 <img src="https://raw.githubusercontent.com/nolimitek/ha-3dsearch/main/docs/images/stock-card.png" alt="3DSEARCH filament stock card" width="420">
 
@@ -56,6 +77,7 @@ Filament in stock and all your spools with colour, remaining grams and where the
 Since 0.5.0 the integration adds a **3DSearch** entry to the sidebar. It opens the complete Printers & Filament workshop from 3dsearch.net – printers, spools, slicer and print queue – right inside Home Assistant, in the colours and font of your Home Assistant theme. It works in the browser and in the companion app.
 
 - Only Home Assistant **administrators** see the entry.
+- Don't need it? Turn off **Show 3DSearch in the sidebar** under Settings → Devices & services → 3DSEARCH → Configure. The entry disappears right away, the sensors and cards stay.
 - It signs in with a short-lived token that the integration fetches with your key. The key never reaches the browser and no 3dsearch.net cookie is needed.
 - Printing labels and exporting open a new browser window with the normal 3dsearch.net sign-in.
 
@@ -90,7 +112,7 @@ actions:
 
 ## Deutsch
 
-Drucker und Filamentlager von [3dsearch.net](https://3dsearch.net/filament/) in Home Assistant. Installation über HACS (benutzerdefiniertes Repository, Typ Integration), danach auf 3dsearch.net unter **Drucker & Filament → Einstellungen → Home Assistant** einen Schlüssel erstellen und in Home Assistant bei **Integration hinzufügen → 3DSEARCH** einfügen. Ab 0.5.0 gibt es in der Seitenleiste den Eintrag **3DSearch** mit der ganzen Werkstatt (Drucker, Spulen, Slicer, Druckwarteschlange) im Design deines Home-Assistant-Themes – sichtbar für Administratoren. Die Integration ist auf Deutsch, Englisch, Französisch, Spanisch, Italienisch und Niederländisch übersetzt. Drucker, die es auf 3dsearch.net nicht mehr gibt, lassen sich auf ihrer Geräteseite löschen (⋮ → Löschen).
+Drucker und Filamentlager von [3dsearch.net](https://3dsearch.net/filament/) in Home Assistant. Installation über HACS (benutzerdefiniertes Repository, Typ Integration), danach auf 3dsearch.net unter **Drucker & Filament → Einstellungen → Home Assistant** einen Schlüssel erstellen und in Home Assistant bei **Integration hinzufügen → 3DSEARCH** einfügen. Ab 0.5.0 gibt es in der Seitenleiste den Eintrag **3DSearch** mit der ganzen Werkstatt (Drucker, Spulen, Slicer, Druckwarteschlange) im Design deines Home-Assistant-Themes – sichtbar für Administratoren; unter **Geräte & Dienste → 3DSEARCH → Konfigurieren** lässt sie sich abschalten. Ab 0.6.0 kannst du im Karten-Editor jeden Teil der Druckerkarte ein- und ausblenden, dazu kommen drei kleine Karten für den aktuellen Druck, die Filamentfächer und die Filamentbox. Die Integration ist auf Deutsch, Englisch, Französisch, Spanisch, Italienisch und Niederländisch übersetzt. Drucker, die es auf 3dsearch.net nicht mehr gibt, lassen sich auf ihrer Geräteseite löschen (⋮ → Löschen).
 
 ## License
 

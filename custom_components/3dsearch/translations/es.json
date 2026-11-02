@@ -38,10 +38,12 @@
       "init": {
         "title": "Opciones",
         "data": {
-          "scan_interval": "Intervalo de actualización"
+          "scan_interval": "Intervalo de actualización",
+          "show_panel": "Mostrar 3DSearch en la barra lateral"
         },
         "data_description": {
-          "scan_interval": "Cada cuánto consulta Home Assistant a 3dsearch.net (segundos). Las nubes de las impresoras se sincronizan como máximo una vez por minuto."
+          "scan_interval": "Cada cuánto consulta Home Assistant a 3dsearch.net (segundos). Las nubes de las impresoras se sincronizan como máximo una vez por minuto.",
+          "show_panel": "Añade todo el taller con el laminador y la cola de impresión a la barra lateral. Desactívalo si solo usas las tarjetas del panel."
         }
       }
     }
