@@ -17,7 +17,7 @@
  */
 (() => {
 "use strict";
-const VERSION = "0.6.2";
+const VERSION = "0.6.3";
 const DOMAIN = "3dsearch";
 const EXT_SLOT = 100;   // slot index of the external spool holder (3dsearch.net)
 

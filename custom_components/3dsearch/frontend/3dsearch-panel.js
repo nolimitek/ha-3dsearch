@@ -87,11 +87,16 @@
           :host { display: block; position: relative; height: 100vh; height: 100dvh; overflow: hidden;
                   background: var(--primary-background-color); }
           .bar { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 4px; box-sizing: border-box;
-                 height: calc(var(--header-height, 56px) + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) 12px 0 4px;
+                 height: calc(var(--header-height, 56px) + var(--safe-area-inset-top, env(safe-area-inset-top, 0px)));
+                 padding: var(--safe-area-inset-top, env(safe-area-inset-top, 0px)) 12px 0 4px;
                  background: var(--app-header-background-color, var(--primary-color)); color: var(--app-header-text-color, #fff);
                  border-bottom: var(--app-header-border-bottom, none); }
           .title { font-size: 20px; font-weight: 400; margin-left: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-          .wrap { position: absolute; left: 0; right: 0; bottom: 0; top: calc(var(--header-height, 56px) + env(safe-area-inset-top, 0px)); }
+          /* System bars: Home Assistant hands their size down as --safe-area-inset-* (the Android app sets it once it
+             draws edge to edge, behind the navigation bar). Without the bottom one the frame ran under the back/home
+             buttons and hid the workshop's tab bar (0.6.3). env() is the fallback for browsers. */
+          .wrap { position: absolute; left: 0; right: 0; bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+                  top: calc(var(--header-height, 56px) + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))); }
           iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: var(--primary-background-color); }
           .msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px;
                  text-align: center; color: var(--secondary-text-color); font-size: 15px; background: var(--primary-background-color); }
